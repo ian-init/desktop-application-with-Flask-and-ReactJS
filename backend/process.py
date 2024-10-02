@@ -1,23 +1,32 @@
+from flask import Flask, jsonify
 import pandas as pd
 
-# Initialize x as a global variable
-x = None  # This will hold the DataFrame
+app = Flask(__name__)
 
-def set_x(dataframe):
-    global x  # Declare x as a global variable to modify it
-    x = dataframe  # Assign the DataFrame to x
-   
-    
-    
-    y = len(x)
-    print(y)
+# Initialize with some sample data for testing purposes
 
-def use_data():
-    if x is not None:
-        print("Process:")
-        print(x.head())  # Print the first few rows of the DataFrame
-    else:
-        print("No data available")
+def attribute_cleaning(dataframe):
+    global attribute_raw
+    attribute_raw = dataframe
+    length_1 = len(attribute_raw)
+    print(f"Attribute Length: {length_1}")  # Debugging print statement
+    return length_1
 
-    
-use_data()
+def node_cleaning(dataframe):
+    global node_raw
+    node_raw = dataframe
+    length_2 = len(node_raw)
+    print(f"Node Length: {length_2}")  # Debugging print statement
+    return length_2
+
+@app.route('/get_lengths', methods=['GET'])
+def get_lengths():
+    print("test")
+    length_1 = attribute_cleaning(attribute_raw)
+    length_2 = node_cleaning(node_raw)
+    print(f"Returning lengths: Length 1 = {length_1}, Length 2 = {length_2}")  # Debugging print statement
+    return jsonify({'length_1': length_1, 'length_2': length_2})
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

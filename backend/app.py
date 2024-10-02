@@ -5,13 +5,13 @@ import pandas as pd
 import io
 
 # Import the set_x function from process.py
-from process import set_x  
-
+from process import attribute_cleaning
+from process import node_cleaning
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# First file upload route (no saving to disk)
+# Attribute list upload route
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -23,20 +23,18 @@ def upload_file():
     try:
         # Read the file directly into a pandas DataFrame without saving it
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-        df = pd.read_csv(stream)
-        set_x(df)
-        
-        # Process the CSV
-        length = len(df)
-        columns = df.columns.tolist()
-        
+        attribute_df = pd.read_csv(stream)
         print("Attribut list upload successfully")
+        attribute_cleaning(attribute_df)
+        length = len(attribute_df)
+        columns = attribute_df.columns.tolist()
+        
 
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Second file upload route (no saving to disk)
+# Node list upload route
 @app.route('/upload_2', methods=['POST'])
 def upload_file_2():
     if 'file' not in request.files:
@@ -48,18 +46,25 @@ def upload_file_2():
     try:
         # Read the file directly into a pandas DataFrame without saving it
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-        df = pd.read_csv(stream)
-        
-        # Process the CSV
-        length = len(df)
-        columns = df.columns.tolist()
-        
+        node_df = pd.read_csv(stream)
         
         print("Node list upload successfully")
+        node_cleaning(node_df)
+        global length
+        length = len(node_df)
+        columns = node_df.columns.tolist()
 
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+
+
+@app.route('/get-length', methods=['GET'])
+def get_length():
+    return jsonify({"length": length})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
