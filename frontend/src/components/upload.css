@@ -1,0 +1,93 @@
+/* wrap components on a flex-row */
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    flex-wrap: wrap;
+    flex: 1;
+    padding: 3vh 2.5vw;
+    margin:5vh 0;
+    border-color: blueviolet;
+
+}
+
+/* for the image in a grid */
+.container img {
+    height:45vh;
+    object-fit: cover;
+    border-radius: 1vw;
+    width: 100%;
+}
+
+.container .overview-img {
+    height:35vh;
+}
+
+/* each department and its description is a cell*/
+.cell {
+    background-color: var(--grey-color);
+    border-radius: 1vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-color: rgb(254, 33, 33);
+}
+
+.cell p {
+    font-size:var(--large-size);
+    font-weight:300;
+    
+    padding-bottom:3vh;
+}
+
+.cell h1 {
+    font-weight:500;
+    padding:1vh 3vw;
+    padding-top:3vh;
+}
+
+.cell h2 {
+    font-size:var(--medium-size);
+    font-weight:400;
+    padding:1vh 3vw;
+    padding-top:3vh;
+}
+
+
+/* span text vertically*/
+.bottom-align {
+    border-top: 2px solid rgba(255,255,255,0.1);
+    vertical-align: bottom;
+}
+
+.bottom-align_for_white_cell {
+    border-top: 2px solid rgb(232, 232, 232, 255);
+    vertical-align: bottom;
+}
+
+.container p {
+    font-size:var(--small-size);
+}
+
+@media (max-width: 900px) {
+    .cell, .container img, .container .overview-img {
+        height: 25vh;
+        border-radius:3vw;
+    }
+
+    .container > div > div {
+        padding-top:1.5vh !important;
+    }
+
+    .container > div > div > div > p {
+        margin-left:var(--medium-size);
+    }
+
+    .container {
+        padding-top:1vh;
+    }
+
+    .empty {
+        display:none;
+    }
+}
