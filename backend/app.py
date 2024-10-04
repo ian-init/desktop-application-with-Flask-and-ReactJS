@@ -1,15 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Make sure this line is present
-
-import pandas as pd
 import io
 
-# Import the set_x function from process.py
-from process import attribute_cleaning
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Use the Agg backend for non-GUI environments
+import networkx as nx
+
 from process import node_cleaning
+
+# Import the set_x function from process.py
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+
 
 # Attribute list upload route
 @app.route('/upload', methods=['POST'])
@@ -21,15 +27,19 @@ def upload_file():
         return jsonify({"error": "No selected file"}), 400
 
     try:
-        # Read the file directly into a pandas DataFrame without saving it
+        # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
         attribute_df = pd.read_csv(stream)
-        print("Attribut list upload successfully")
-        attribute_cleaning(attribute_df)
+        
+        # Pass back basic information to frontend
         length = len(attribute_df)
         columns = attribute_df.columns.tolist()
-        
+        print("Attribut list upload successfully, length of list: ", length) # print on Flask terminal
 
+        # Pass DataFrame to cleaning module
+       
+        
+        #Return length and columns name to frontend
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -44,26 +54,36 @@ def upload_file_2():
         return jsonify({"error": "No selected file"}), 400
 
     try:
-        # Read the file directly into a pandas DataFrame without saving it
+        # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-        node_df = pd.read_csv(stream)
+        node_df = pd.read_csv(stream, delim_whitespace=True, comment='*')
         
-        print("Node list upload successfully")
-        node_cleaning(node_df)
         global length
+        # Pass back basic information to frontend
         length = len(node_df)
         columns = node_df.columns.tolist()
+        print("Hode list upload successfully, length of list: ", length)
 
+
+        # Pass DataFrame to cleaning module
+        node_cleaning(node_df)
+        
+        global json_data
+        viewUploadStat = node_cleaning(node_df)
+        json_data = viewUploadStat.get_json()
+        print(json_data)
+        
+
+        #Return length and columns name to frontend
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+@app.route('/get-result', methods=['GET'])
+def get_result():
     
-
-
-@app.route('/get-length', methods=['GET'])
-def get_length():
-    return jsonify({"length": length})
+    return jsonify(json_data)
 
 
 if __name__ == '__main__':
