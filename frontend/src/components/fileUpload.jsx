@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './viewUploadResult.css'
 
 function fileUpload({htmlTitle, flaskHost}) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -8,7 +9,6 @@ function fileUpload({htmlTitle, flaskHost}) {
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-    console.log(flaskHost);
   };
 
   const handleUpload = async () => {
@@ -42,24 +42,26 @@ function fileUpload({htmlTitle, flaskHost}) {
   };
   return (
     <>
-      <div>
-        <h1>{htmlTitle}</h1>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleUpload}>Upload First File</button>
-        <p>{message}</p>
-        {columns.length > 0 && (
-          <div>
-            <p>{length !== null ? `Length of CSV: ${length}` : 'No data uploaded yet'}</p>
-          </div>
-        )}
-        {columns.length > 0 && (
-          <div>
-            <p>Column Names: {columns.map((col, index) => (
-              <span key={index}> {col}{index < columns.length - 1 ? ', ' : ''}</span>
-            ))}</p>
-          </div>
-        )}
-      </div>   
+      <div className="grid">
+        <div className="container">
+          <h1>{htmlTitle}</h1>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleUpload}>Upload First File</button>
+          <h4>{message}</h4>
+          {columns.length > 0 && (
+            <div>
+              <p>{length !== null ? `Length of CSV: ${length}` : 'No data uploaded yet'}</p>
+            </div>
+          )}
+          {columns.length > 0 && (
+            <div>
+              <p>Column Names: {columns.map((col, index) => (
+                <span key={index}> {col}{index < columns.length - 1 ? ', ' : ''}</span>
+              ))}</p>
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 }

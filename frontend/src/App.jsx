@@ -4,6 +4,8 @@ import FileUpload from './components/fileUpload.jsx'
 import ViewUploadResult from './components/viewUploadResult.jsx'
 import React, { useState } from 'react';
 
+import '../src/components/viewUploadResult.css'
+
 const FileUploadModule = () => {
   const navigate = useNavigate();
 
@@ -13,8 +15,8 @@ const FileUploadModule = () => {
   return (
     <div>
     <FileUpload
-        htmlTitle={"Attribute list"}
-        flaskHost={"http://localhost:5000/upload"}
+      htmlTitle={"Attribute list"}
+      flaskHost={"http://localhost:5000/upload"}
     />
     <FileUpload
       htmlTitle={"Nodes list"}
