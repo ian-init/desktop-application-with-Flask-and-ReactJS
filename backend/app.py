@@ -83,6 +83,17 @@ def get_nodedescriptivestat():
 def get_attributevisualisation():
     return jsonify(attribute_visualization_json_data)
 
+@app.route('/get-startAlaam', methods=['GET'])
+def get_startAlaam():
+    key_list = list(attribute_visualization_json_data)
+    return jsonify(key_list)
+
+@app.route('/get-alaamVariables', methods=['POST'])
+def alaamVariables():
+    data = request.json
+    selected_keys = data.get('selectedKeys', [])
+    print('Attributes selected for ALAAM analysis: ', selected_keys)
+    return jsonify({"message": "Data received", "selected_keys": selected_keys})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './viewUploadResult.css'
-import c from "../../../backend/graph_plot.png"
+import c from "../../../backend/edge_visualization.png"
 
 
 const NodeDescriptiveStat = () => {

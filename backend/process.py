@@ -29,17 +29,35 @@ def node_visualization(dataframe):
     edges_num = G.number_of_edges()
     clustering_coefficient = nx.clustering(G)
     transitivity = nx.transitivity(G)
+    betweenness = nx.betweenness_centrality(G)
+    
+    
     print("NetworkX descriptive stat run successfully")
     
-    # Draw the graph with color-coded nodes
+    # Generate betweenness histgrom
+    betweenness_value = list(betweenness.values())
+    plt.hist(betweenness_value)
+    plt.title('Betweenness')
+    betweenness_plot = plt.gcf()
+    betweenness_plot.savefig('betweenness_hist.png')
+    print("Betweenness histogram exported successfully, next one is Clustering Coefficient")
+
+    # Generate Clustering Coefficient histgrom
+    clustering_coefficient_value = list(clustering_coefficient.values())
+    plt.hist(clustering_coefficient_value)
+    plt.title('Clustering Coefficient')
+    clustering_coefficient_value_plot = plt.gcf()
+    clustering_coefficient_value_plot.savefig('clustering_coefficient_hist.png')
+    print("Clustering Coefficient histogram exported successfully, next one is ... ")
+
+    # Node graph
     plt.figure(figsize=(15, 15))
     nx.draw(G, with_labels=False, node_size=10, linewidths=1, font_size=8)
-    plt.title('Graph Visualization with Colour-Coded Nodes')
-    
-    # Save the plot as a PDF file
-    graph_plot = plt.gcf()
-    graph_plot.savefig('graph_plot.png')  # Saves the plot as a PNG file
-    print("Source Nodes graph exported successfully")
+    plt.title('Edge visualization')
+    edge_visualization_plot = plt.gcf()
+    edge_visualization_plot.savefig('edge_visualization.png')
+
+    print("Nodes graph exported successfully")
     
     return jsonify({"length": length, "columns": columns, "Density": density, "Averageclustering": average_clustering, "NodesNum": nodes_num, "EdgesMum": edges_num, "Transitivity": transitivity})
 

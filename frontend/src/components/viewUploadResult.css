@@ -9,8 +9,8 @@
 /* for the image in a grid */
   .container img {
     width:100%;
-    height:60vh;
-    object-fit: cover;
+    height:35vh;
+    object-fit: fill;
     border-radius: 1vw;
   }
   

@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
-import './App.css';
-import FileUpload from './components/fileUpload.jsx'
-import ViewUploadResult from './components/viewUploadResult.jsx'
 import React, { useState } from 'react';
 
+import FileUpload from './components/fileUpload.jsx'
+import ViewUploadResult from './components/viewUploadResult.jsx'
+import StartAlaam from './components/startAlaam.jsx';
+
+import './App.css';
 import '../src/components/viewUploadResult.css'
 
 const FileUploadModule = () => {
@@ -19,7 +21,7 @@ const FileUploadModule = () => {
       flaskHost={"http://localhost:5000/upload"}
     />
     <FileUpload
-      htmlTitle={"Nodes list"}
+      htmlTitle={"Edge list"}
       flaskHost={"http://localhost:5000/upload_2"}
     />
       <button onClick={handleButtonClick}>Confirm upload</button>
@@ -39,6 +41,7 @@ function App() {
       <Routes>
         <Route path="/" element={<FileUploadModule />} />
         <Route path="/viewUploadResult" element={<ViewUploadResult />} />
+        <Route path="/startAlaam" element={<StartAlaam />} />
       </Routes>
     </Router>
 	</>
