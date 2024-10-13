@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './viewUploadResult.css'
-import a from "../../../backend/pie_chart.png"
 
 const AttributeDescriptiveStat = () => {
   const [attributeDict, setAttributeDict] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [image, setImage] = useState('');
+  const [length, setLength] = useState(null);
+  const [columns, setColumns] = useState([]);
 
   // Fetch the dictionary from backend when the component mounts
   useEffect(() => {
@@ -15,7 +17,10 @@ const AttributeDescriptiveStat = () => {
             const result = await response.json();
 
             if (response.ok) {
-                setAttributeDict(result);  // Use 'result' here
+                setLength(result.length);
+                setColumns(result.columns)
+                setAttributeDict(result.attributeDict);
+                setImage(`data:image/png;base64,${result.image}`);
                 setLoading(false);
             } else {
                 console.error("Error:", result.error);
@@ -44,7 +49,9 @@ const AttributeDescriptiveStat = () => {
     <div className='grid'>
         <div className='container'>
         <h1>Attribute Dictionary Table</h1>
-        <table border="1">
+        <p>No. of row in file: {length}</p>
+        <p>Column Name: {columns.join(', ')}</p>
+        <table className='table'>
             <thead>
             <tr>
                 <th>Column Name</th>
@@ -62,32 +69,10 @@ const AttributeDescriptiveStat = () => {
             </tbody>
         </table>
         </div>
-    </div>
-    
-    <div className='grid'>
         <div className='container'>
-            <img src={a} alt="Graph Visualization" />
+                {image && <img style={{height: "60vh"}} src={image} alt="Node Visualization" />}
         </div>
-        <div className='container'>
-            <img src={a} alt="Graph Visualization" />
-        </div>
-        <div className='container'>
-            <img src={a} alt="Graph Visualization" />
-        </div>
-    </div>
-    
-    <div className='grid'>
-        <div className='container'>
-            <img src={a} alt="Graph Visualization" />
-        </div>
-        <div className='container'>
-            <img src={a} alt="Graph Visualization" />
-        </div>
-        <div className='container'>
-            <img src={a} alt="Graph Visualization" />
-        </div>
-    </div>
-    
+    </div>  
    
     </>
   );

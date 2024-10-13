@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './viewUploadResult.css'
-import c from "../../../backend/edge_visualization.png"
-
 
 const NodeDescriptiveStat = () => {
-    const [length, setLength] = useState(null); // State to store the length
+    const [length, setLength] = useState(null);
     const [density, setDensity] = useState(null);
     const [averageclustering, setAverageclustering] = useState(null);
     const [nodesNum, setNodesNum] = useState(null);
@@ -12,6 +10,7 @@ const NodeDescriptiveStat = () => {
     const [clusteringcoefficient, setClusteringCoefficient] = useState(null); 
     const [transitivity, setTransitivity] = useState(null); 
     const [columns, setColumns] = useState([]);
+    const [image, setImage] = useState('');
 
     // Fetch the json from backend when the component mounts
     useEffect(() => {
@@ -28,7 +27,8 @@ const NodeDescriptiveStat = () => {
                     setNodesNum(result.NodesNum)
                     setEdgesNum(result.EdgesMum)
                     setClusteringCoefficient(result.ClusteringCoefficient)
-                    setTransitivity(result.Transitivity) 
+                    setTransitivity(result.Transitivity)
+                    setImage(`data:image/png;base64,${result.image}`);
                 } else {
                     console.error("Error:", result.error);
                 }
@@ -49,6 +49,10 @@ const NodeDescriptiveStat = () => {
                         <p>No. of row in file: {length}</p>
                         <p>Column Name: {columns.join(', ')}</p>
                         <table className='table'>
+                            <tr>
+                                <th>Measurement</th>
+                                <th>Value</th>
+                            </tr>
                             <tr>
                                 <td>Number of Nodes</td>
                                 <td>{nodesNum}</td>
@@ -81,7 +85,7 @@ const NodeDescriptiveStat = () => {
                 )}
             </div>
             <div className='container'>
-                <img src={c} alt="Graph Visualization" />
+                {image && <img style={{height: "60vh"}} src={image} alt="Node Visualization" />}
             </div>
         </div>
         </>

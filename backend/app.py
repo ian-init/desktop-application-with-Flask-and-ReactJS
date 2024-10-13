@@ -35,7 +35,7 @@ def upload_file():
         # Pass DataFrame to cleaning module
         global attribute_visualization_json_data
         attribute_visualization_json_data = attributre_visualization(attribute_df).get_json()
-        print("Attribute successfully extracted: ", attribute_visualization_json_data)
+        print("Attribute analysis completed successfully")
 
         #Return length and columns name to frontend       
         return jsonify({"length": length, "columns": columns})
@@ -66,7 +66,7 @@ def upload_file_2():
         # Pass DataFrame to visualisation module                
         global node_visualization_json_data
         node_visualization_json_data = node_visualization(node_df).get_json()
-        print("Node successfully extracted: ", node_visualization_json_data)
+        print("Node analysis completed successfully")
 
 
         #Return length and columns name to frontend
@@ -94,6 +94,19 @@ def alaamVariables():
     selected_keys = data.get('selectedKeys', [])
     print('Attributes selected for ALAAM analysis: ', selected_keys)
     return jsonify({"message": "Data received", "selected_keys": selected_keys})
+
+
+@app.route('/get-centrality', methods=['POST'])
+def get_centrality():
+    data = request.get_json()
+    centrality = data.get('centrality')
+
+    # You can now use the centrality value for further processing
+    print("Selected centrality: ", centrality)
+
+    # Example response back to the React app
+    return jsonify({'response': f'Centrality {centrality} selected!'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
