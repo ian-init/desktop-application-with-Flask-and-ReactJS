@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 # Enable cross-origin AJAX
 from flask_cors import CORS
+import base64
 import io
 
 import pandas as pd
 
 from process import node_visualization
 from process import attributre_visualization
+from process import create_edge_histogram
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -88,6 +90,7 @@ def get_startAlaam():
     key_list = list(attribute_visualization_json_data)
     return jsonify(key_list)
 
+
 @app.route('/get-alaamVariables', methods=['POST'])
 def alaamVariables():
     data = request.json
@@ -100,12 +103,16 @@ def alaamVariables():
 def get_centrality():
     data = request.get_json()
     centrality = data.get('centrality')
-
     # You can now use the centrality value for further processing
     print("Selected centrality: ", centrality)
 
-    # Example response back to the React app
-    return jsonify({'response': f'Centrality {centrality} selected!'})
+    
+    img_io = create_edge_histogram(centrality, node_df)
+    # Convert the image to a base64 string
+    img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
+
+    # Return the base64 image as JSON response
+    return jsonify({'image': img_base64})
 
 
 if __name__ == '__main__':

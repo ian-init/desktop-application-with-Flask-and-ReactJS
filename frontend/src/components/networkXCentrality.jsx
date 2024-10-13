@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function CentralityForm({ setCentrality }) {
   const [localCentrality, setLocalCentrality] = useState(''); // Local state to store centrality
+  const [image, setImage] = useState('');
 
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value;
@@ -22,20 +23,24 @@ function CentralityForm({ setCentrality }) {
     });
 
     const data = await response.json();
-    console.log('Response from Flask:', data);
+    // Set the base64 image string from Flask response into the state
+    setImage(`data:image/png;base64,${data.image}`);
   };
 
   return (
+    <div>
     <form onSubmit={handleSubmitToFlask}>
       <label>Select a centrality Measurement:</label>
       <select onChange={handleSelectChange} value={localCentrality}>
-        <option value="1">Betweenness</option>
-        <option value="2">Closeness</option>
-        <option value="3">Eigenvector</option>
-        <option value="4">Clustering Coefficient</option>
+        <option value="Betweenness">Betweenness</option>
+        <option value="Closeness">Closeness</option>
+        <option value="Eigenvector">Eigenvector</option>
+        <option value="ClusteringCoefficient">Clustering Coefficient</option>
       </select>
       <button type="submit">Submit to Flask</button>
     </form>
+    {image && <img src={image} alt="Edge Histogram" />}
+    </div>
   );
 }
 

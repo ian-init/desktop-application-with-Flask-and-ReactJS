@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # Make sure this line is present
 import base64
 import io
+from PIL import Image
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -105,7 +106,6 @@ def attributre_visualization(dataframe):
     for i in range(len(columns) -2):
         unique_value += stack_bar_data[columns[i]].unique().tolist()
     unique_value = set(unique_value)
-    print(unique_value)
 
     # Calculate occurance of categories in percentage
     percentage_counts = stack_bar_data.apply(lambda x: x.value_counts(normalize=True)).fillna(0) * 100
@@ -153,6 +153,38 @@ def attributre_visualization(dataframe):
     }
 
     return jsonify(response_data)
+
+
+def create_edge_histogram(selectedCentrality, node_df):
+
+    select_centrality = selectedCentrality
+
+    edge_list = node_df
+    columns = edge_list.columns.tolist()   
+    G = nx.from_pandas_edgelist(edge_list[['source', 'target']], source='source', target='target', create_using=nx.DiGraph())
+
+    if select_centrality == "Betweenness":
+        vis = nx.betweenness_centrality(G)
+    elif select_centrality == "Closeness":
+        vis = nx.closeness_centrality(G)
+    elif select_centrality == "Eigenvector":
+        vis = nx.eigenvector_centrality(G)
+    else:
+        vis = nx.clustering(G)
+
+    # Generate betweenness histgrom
+    vis_value = list(vis.values())
+    plt.hist(vis_value)
+    plt.title(select_centrality)
+    
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+
+    print("Histogram exported successfully")
+    return img
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
