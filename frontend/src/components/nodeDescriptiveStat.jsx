@@ -7,7 +7,6 @@ const NodeDescriptiveStat = () => {
     const [averageclustering, setAverageclustering] = useState(null);
     const [nodesNum, setNodesNum] = useState(null);
     const [edgesNum, setEdgesNum] = useState(null);
-    const [clusteringcoefficient, setClusteringCoefficient] = useState(null); 
     const [transitivity, setTransitivity] = useState(null); 
     const [columns, setColumns] = useState([]);
     const [image, setImage] = useState('');
@@ -16,17 +15,16 @@ const NodeDescriptiveStat = () => {
     useEffect(() => {
         const fetchResult = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/get-nodedescriptivestat`); // Make sure this endpoint returns the length
+                const response = await fetch(`http://localhost:5000/get-nodedescriptivestat`);
                 const result = await response.json();
 
                 if (response.ok) {
-                    setLength(result.length); // Set the length received from the backend
+                    setLength(result.length);
                     setDensity(result.Density)
                     setColumns(result.columns)
                     setAverageclustering(result.Averageclustering)
                     setNodesNum(result.NodesNum)
-                    setEdgesNum(result.EdgesMum)
-                    setClusteringCoefficient(result.ClusteringCoefficient)
+                    setEdgesNum(result.EdgesNum)
                     setTransitivity(result.Transitivity)
                     setImage(`data:image/png;base64,${result.image}`);
                 } else {
@@ -43,7 +41,7 @@ const NodeDescriptiveStat = () => {
         <>
         <div className='grid'>
             <div className='container'>
-                <h1>Node details</h1>
+                <h1>Edge analysis</h1>
                 {length !== null ? (
                     <div>
                         <p>No. of row in file: {length}</p>
@@ -70,10 +68,6 @@ const NodeDescriptiveStat = () => {
                                 <td>{averageclustering}</td>
                             </tr>
                             <tr>
-                                <td>Clustering Coefficient</td>
-                                <td>{clusteringcoefficient}</td>
-                            </tr>
-                            <tr>
                                 <td>Transitivity</td>
                                 <td>{transitivity}</td>
                             </tr>
@@ -85,7 +79,7 @@ const NodeDescriptiveStat = () => {
                 )}
             </div>
             <div className='container'>
-                {image && <img style={{height: "60vh"}} src={image} alt="Node Visualization" />}
+                {image && <img  src={image} alt="Edge Visualization" />}
             </div>
         </div>
         </>

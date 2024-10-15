@@ -9,6 +9,7 @@ import pandas as pd
 from process import node_visualization
 from process import attributre_visualization
 from process import create_edge_histogram
+from process import snowball
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -67,16 +68,16 @@ def upload_file_2():
 
         # Pass DataFrame to visualisation module                
         global node_visualization_json_data
-        node_visualization_json_data = node_visualization(node_df).get_json()
+        fig_size = 20
+        node_visualization_json_data = node_visualization(node_df, fig_size).get_json()
         print("Node analysis completed successfully")
-
 
         #Return length and columns name to frontend
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-# return to frontend
+
+
 @app.route('/get-nodedescriptivestat', methods=['GET'])
 def get_nodedescriptivestat():
     return jsonify(node_visualization_json_data)
@@ -85,29 +86,41 @@ def get_nodedescriptivestat():
 def get_attributevisualisation():
     return jsonify(attribute_visualization_json_data)
 
+@app.route('/get-snowball', methods=['POST'])
+def get_snowball(): 
+    data = request.json # this is json return from frontend form
+    start_node = int(data.get('startNode'))
+    num_cycle = int(data.get('numCycle'))
+    print('Parameters selected for snowball: Start node: ', start_node, 'No. of cycle: ', num_cycle)
+    
+    snowballed_df = snowball(node_df, start_node, num_cycle)
+    fig_size = 5
+    snowballed_node_visualization_json_data = node_visualization(snowballed_df, fig_size).get_json()
+    return jsonify(snowballed_node_visualization_json_data)
+
+
 @app.route('/get-startAlaam', methods=['GET'])
 def get_startAlaam():
     key_list = list(attribute_visualization_json_data)
     return jsonify(key_list)
 
-
 @app.route('/get-alaamVariables', methods=['POST'])
 def alaamVariables():
     data = request.json
-    selected_keys = data.get('selectedKeys', [])
-    print('Attributes selected for ALAAM analysis: ', selected_keys)
-    return jsonify({"message": "Data received", "selected_keys": selected_keys})
+    selected_attributes = data.get('selectedAttributes', [])
+    print('Attributes selected for ALAAM analysis: ', selected_attributes)
+    return jsonify({"message": "Data received", "selected_keys": selected_attributes})
 
 
 @app.route('/get-centrality', methods=['POST'])
 def get_centrality():
     data = request.get_json()
     centrality = data.get('centrality')
+    bin_size = int(data.get('binSize'))
     # You can now use the centrality value for further processing
-    print("Selected centrality: ", centrality)
+    print("Selected centrality: ", centrality, "Bin size: ", bin_size)
 
-    
-    img_io = create_edge_histogram(centrality, node_df)
+    img_io = create_edge_histogram(centrality, node_df, bin_size)
     # Convert the image to a base64 string
     img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
 

@@ -6,7 +6,7 @@
 
   color-scheme: light dark;
   color: rgba(58, 58, 58, 0.897);
-  background-color: rgb(236, 237, 246);
+  background-color: white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,11 +20,6 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 p {
@@ -43,7 +38,7 @@ input {
 }
 
 button {
-  border-radius: 1vw;
+  border-radius: 3vw;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -51,15 +46,12 @@ button {
   font-family: inherit;
   background-color: #8c92fe;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: 1s;
 }
 button:hover {
   background-color: #c55757;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -75,8 +67,24 @@ button:focus-visible {
 }
 
 form {
-  border-radius: 1vw;
-  border-style: dashed;
+  border-radius: 2vw;
   padding: 10px;
+  background-color: #d2d4f8e7;
+  color: black;
+  width: 50%;
+}
 
+select {
+  color: black;
+  padding: 10px 2px;
+  margin: 5px 20px 5px;
+  border: none;
+  border-radius: 3vw;
+  background-color: #f1f1f1;
+}
+
+input {
+  background-color: #e5e6f4e7;
+  margin: 5px 20px 5px;
+  color: black;
 }

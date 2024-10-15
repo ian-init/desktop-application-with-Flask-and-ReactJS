@@ -16,7 +16,7 @@ CORS(app)  # Enable CORS for all routes
 
 # Initialize with some sample data for testing purposes
 
-def node_visualization(dataframe):
+def node_visualization(dataframe, fig_size):
     # extract csv metadata    
     edge_list = dataframe
     columns = edge_list.columns.tolist()
@@ -31,35 +31,11 @@ def node_visualization(dataframe):
     average_clustering = nx.average_clustering(G)
     nodes_num = G.number_of_nodes()
     edges_num = G.number_of_edges()
-    clustering_coefficient = nx.clustering(G)
-    transitivity = nx.transitivity(G)
-    betweenness = nx.betweenness_centrality(G)
-    
-    
+    transitivity = nx.transitivity(G)    
     print("NetworkX descriptive stat run successfully")
-    
-    # Generate betweenness histgrom
-    betweenness_value = list(betweenness.values())
-    plt.hist(betweenness_value)
-    plt.title('Betweenness')
-    betweenness_plot = plt.gcf()
-    betweenness_plot.savefig('betweenness_hist.png', dpi=300)
-    print("Betweenness histogram exported successfully, next one is Clustering Coefficient")
-    plt.clf()
-    plt.close()
-
-    # Generate Clustering Coefficient histgrom
-    clustering_coefficient_value = list(clustering_coefficient.values())
-    plt.hist(clustering_coefficient_value)
-    plt.title('Clustering Coefficient')
-    clustering_coefficient_value_plot = plt.gcf()
-    clustering_coefficient_value_plot.savefig('clustering_coefficient_hist.png')
-    print("Clustering Coefficient histogram exported successfully, next one is ... ")
-    plt.clf()
-    plt.close()
 
     # Node graph
-    plt.figure(figsize=(50, 50))
+    plt.figure(figsize=(fig_size, fig_size))
     nx.draw(G, with_labels=False, node_size=10, linewidths=1, font_size=8)
     plt.title('Edge visualization')
 
@@ -80,7 +56,7 @@ def node_visualization(dataframe):
     "Density": density,
     "Averageclustering": average_clustering,
     "NodesNum": nodes_num,
-    "EdgesMum": edges_num,
+    "EdgesNum": edges_num,
     "Transitivity": transitivity,
     "image": img_base64,
     }
@@ -155,7 +131,7 @@ def attributre_visualization(dataframe):
     return jsonify(response_data)
 
 
-def create_edge_histogram(selectedCentrality, node_df):
+def create_edge_histogram(selectedCentrality, node_df, bin_size):
 
     select_centrality = selectedCentrality
 
@@ -169,12 +145,13 @@ def create_edge_histogram(selectedCentrality, node_df):
         vis = nx.closeness_centrality(G)
     elif select_centrality == "Eigenvector":
         vis = nx.eigenvector_centrality(G)
-    else:
+    elif select_centrality == "ClusteringCoefficient":
         vis = nx.clustering(G)
+        
 
     # Generate betweenness histgrom
     vis_value = list(vis.values())
-    plt.hist(vis_value)
+    plt.hist(vis_value, bins=bin_size)
     plt.title(select_centrality)
     
     img = io.BytesIO()
@@ -182,9 +159,41 @@ def create_edge_histogram(selectedCentrality, node_df):
     plt.close()
     img.seek(0)
 
-    print("Histogram exported successfully")
+    print("Histogram generated successfully")
     return img
-    
 
+def snowball(dataframe, start_node, num_cycle):
+
+    sampled_edges = []  # Store the edges (source, target) as tuples
+    current_nodes = {start_node}  # Start from the initial node
+    
+    for i in range(num_cycle):
+        new_nodes = set()  # Initialize a new set to store nodes in this cycle
+        
+        # Iterate through the current nodes to find their neighbors
+        for node in current_nodes: 
+            # Find the rows in the DataFrame where the current node is the source
+            neighbors = dataframe[dataframe['source'] == node]['target'].tolist()
+            
+            # If neighbors are found, process them
+            if neighbors:
+                for neighbor in neighbors:
+                    sampled_edges.append((node, neighbor))  # Store the edge (source, target)
+                new_nodes.update(neighbors)  # Add new neighbors to the set of new nodes
+        
+        # Move to the next cycle with the new nodes
+        current_nodes = new_nodes
+    
+    # Convert sampled edges to a DataFrame
+    sampled_df = pd.DataFrame(sampled_edges, columns=["source", "target"])
+
+
+    return sampled_df
+
+
+
+    
 if __name__ == '__main__':
     app.run(debug=True)
+
+

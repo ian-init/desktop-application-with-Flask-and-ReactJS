@@ -2,36 +2,40 @@ import React, { useEffect, useState } from 'react';
 import './viewUploadResult.css'
 
 function startAlaam() {
-    const [keyList, setKeyList] = useState([]);
-    const [selectedKeys, setSelectedKeys] = useState([]);
+    const [attributeDict, setAttributeDict] = useState({});
+    const [selectedAttributes, setSelectedAttributes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch data from the Flask backend
     useEffect(() => {
-        fetch('http://localhost:5000/get-startAlaam')
-            .then(response => response.json())
-            .then(data => setKeyList(data))
-            .catch(error => console.error('Error fetching data:', error));
+        const fetchResult = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/get-attributevisualisation');
+                const result = await response.json();
+    
+                if (response.ok) {
+                    setAttributeDict(result.attributeDict);
+                    setLoading(false);
+                } else {
+                    console.error("Error:", result.error);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                setError(error);
+                setLoading(false);
+            }
+        };
+        fetchResult();
     }, []);
 
-    // Handle checkbox change
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        if (checked) {
-            setSelectedKeys([...selectedKeys, name]);
-        } else {
-            setSelectedKeys(selectedKeys.filter((key) => key !== name));
-        }
-    };
-
-    // Handle form submission
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch('http://localhost:5000/analysis', {
+        fetch('http://localhost:5000/get-alaamVariables', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ selectedKeys }),
+            body: JSON.stringify({ selectedAttributes }), // Send the selectedAttributes state variable
         })
         .then(response => response.json())
         .then(data => {
@@ -39,26 +43,45 @@ function startAlaam() {
             // Handle the response from the backend if needed
         })
         .catch(error => console.error('Error sending data to backend:', error));
+    }
+
+    const handleCheckboxChange = (event) => {
+        const attribute = event.target.name;
+        if (event.target.checked) {
+            setSelectedAttributes([...selectedAttributes, attribute]);
+        } else {
+            setSelectedAttributes(selectedAttributes.filter(attr => attr !== attribute));
+        }
     };
 
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+
     return (
-        <div className='container'>
-        <form onSubmit={handleSubmit}>
-            {keyList.map((key, index) => (
-                <div key={index}>
-                    <input
-                        type="checkbox"
-                        id={`checkbox-${index}`}
-                        name={key}
-                        onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor={`checkbox-${index}`}>{key}</label>
-                </div>
-            ))}
-            <button type="submit">Submit</button>
-        </form>
+        <div className='grid'> 
+            <div className='container'>
+                <form onSubmit={handleSubmit}>
+                    {Object.keys(attributeDict).map((key) => (
+                        <div key={key}>
+                            <input 
+                                type="checkbox" 
+                                id={key} 
+                                name={key} 
+                                onChange={handleCheckboxChange} 
+                            />
+                            <label htmlFor={key}>{key}</label>
+                        </div>
+                    ))}
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
     );
-}
+    }
 
 export default startAlaam;

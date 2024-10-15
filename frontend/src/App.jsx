@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import FileUpload from './components/fileUpload.jsx'
 import ViewUploadResult from './components/viewUploadResult.jsx'
 import StartAlaam from './components/startAlaam.jsx';
+import Snowball from './components/snowball.jsx';
 
 import './App.css';
 import '../src/components/viewUploadResult.css'
@@ -24,7 +25,8 @@ const FileUploadModule = () => {
       htmlTitle={"Edge list"}
       flaskHost={"http://localhost:5000/upload_2"}
     />
-      <button onClick={handleButtonClick}>Confirm upload</button>
+    <hr></hr>
+      <button style={{margin: '30px'}}onClick={handleButtonClick}>Confirm upload</button>
     </div>
   );
 };
@@ -42,6 +44,7 @@ function App() {
         <Route path="/" element={<FileUploadModule />} />
         <Route path="/viewUploadResult" element={<ViewUploadResult />} />
         <Route path="/startAlaam" element={<StartAlaam />} />
+        <Route path="/snowball" element={<Snowball />} />
       </Routes>
     </Router>
 	</>

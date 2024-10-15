@@ -46,7 +46,7 @@ function fileUpload({htmlTitle, flaskHost}) {
         <div className="container">
           <h1>{htmlTitle}</h1>
           <input type="file" onChange={handleFileChange} />
-          <button onClick={handleUpload}>Upload First File</button>
+          <button onClick={handleUpload}>Upload</button>
           <h4>{message}</h4>
           {columns.length > 0 && (
             <div>

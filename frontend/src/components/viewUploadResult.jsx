@@ -13,16 +13,20 @@ const viewUploadResult = () => {
   const handleNavigateToAlaam = () => {
     navigate('/startAlaam');
   };
+  const handleNavigateToSnowball = () => {
+    navigate('/snowball');
+  };
 
   return (
     <>
       <AttributeDescriptiveStat />
       <NodeDescriptiveStat />
-      
-      {/* Pass setCentrality to CentralityForm to keep track of the centrality value */}
-      <NetworkXCentrality setCentrality={setCentrality} />  
-      {/* Button to navigate to /startAlaam */}
-      <button onClick={handleNavigateToAlaam}>Start Alaam</button>
+      <NetworkXCentrality setCentrality={setCentrality} /> 
+      <hr></hr>
+      <div style={{ display: "flex", justifyContent: "space-evenly", margin: '30px'}}>
+        <button onClick={handleNavigateToSnowball} >Snowball sampling</button>
+        <button onClick={handleNavigateToAlaam} >Initiate Alaam</button>
+      </div>
     </>
   );
 }

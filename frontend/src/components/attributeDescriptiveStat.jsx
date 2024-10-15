@@ -48,7 +48,7 @@ const AttributeDescriptiveStat = () => {
     <>
     <div className='grid'>
         <div className='container'>
-        <h1>Attribute Dictionary Table</h1>
+        <h1>Attribute analysis</h1>
         <p>No. of row in file: {length}</p>
         <p>Column Name: {columns.join(', ')}</p>
         <table className='table'>
@@ -70,7 +70,7 @@ const AttributeDescriptiveStat = () => {
         </table>
         </div>
         <div className='container'>
-                {image && <img style={{height: "60vh"}} src={image} alt="Node Visualization" />}
+                {image && <img src={image} alt="Node Visualization" />}
         </div>
     </div>  
    
