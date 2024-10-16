@@ -64,11 +64,10 @@ function CentralityForm({ setCentrality }) {
 
       {showParagraph && (
         <p>
-          You can calculate the centrality measurement of individual edges.
-          The result will be visualized.
+          You can calculate the centrality measurement &#40;Betweenness, Closeness, Eigenvector, and Clustering Coefficient&#41; of individual edges.
+          The result will be visualized in Histogram.
         </p>
       )}
-
       {image && <img src={image} alt="Edge Histogram" />}
     </div>
   );

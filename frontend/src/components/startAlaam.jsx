@@ -6,6 +6,7 @@ function startAlaam() {
     const [selectedAttributes, setSelectedAttributes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [alaamResults, setAlaamResults] = useState([]); // New state variable for storing results
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -40,7 +41,7 @@ function startAlaam() {
         .then(response => response.json())
         .then(data => {
             console.log('Response from Flask:', data);
-            // Handle the response from the backend if needed
+            setAlaamResults(data); // Store the results in the alaamResults state
         })
         .catch(error => console.error('Error sending data to backend:', error));
     }
@@ -63,25 +64,50 @@ function startAlaam() {
     }
 
     return (
-        <div className='grid'> 
+        <div className='grid'>
             <div className='container'>
-                <form onSubmit={handleSubmit}>
-                    {Object.keys(attributeDict).map((key) => (
-                        <div key={key}>
-                            <input 
-                                type="checkbox" 
-                                id={key} 
-                                name={key} 
-                                onChange={handleCheckboxChange} 
-                            />
-                            <label htmlFor={key}>{key}</label>
-                        </div>
-                    ))}
+                <form style={{margin: 'auto'}} onSubmit={handleSubmit}>
+                    <label>Select one attribute for ALAAM:</label>
+                    <select onChange={handleCheckboxChange}>
+                        {Object.keys(attributeDict).map((key) => (
+                            <option key={key} value={key}>
+                                {key}
+                            </option>
+                        ))}
+                    </select>
                     <button type="submit">Submit</button>
                 </form>
+
+                {/* Render the results table if alaamResults is not empty */}
+                {alaamResults.length > 0 && (
+                    <table className='table'>
+                        <thead>
+                            <tr>
+                                <th>Effect</th>
+                                <th>Lambda</th>
+                                <th>Parameter</th>
+                                <th>StdErr</th>
+                                <th>T-Ratio</th>
+                                <th>SACF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {alaamResults.map((result, index) => (
+                                <tr key={index}>
+                                    <td>{result.effect}</td>
+                                    <td>{result.lambda}</td>
+                                    <td>{result.parameter}</td>
+                                    <td>{result.stderr}</td>
+                                    <td>{result.t_ratio}</td>
+                                    <td>{result.sacf}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
-    }
+}
 
 export default startAlaam;

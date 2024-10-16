@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+
+
 # Enable cross-origin AJAX
 from flask_cors import CORS
 import base64
@@ -10,6 +12,8 @@ from process import node_visualization
 from process import attributre_visualization
 from process import create_edge_histogram
 from process import snowball
+
+from app2 import alaam
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -24,6 +28,7 @@ def upload_file():
         return jsonify({"error": "No selected file"}), 400
 
     try:
+        print('Attribute analysis start')
         # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("utf-8"))
         global attribute_df
@@ -38,7 +43,7 @@ def upload_file():
         # Pass DataFrame to cleaning module
         global attribute_visualization_json_data
         attribute_visualization_json_data = attributre_visualization(attribute_df).get_json()
-        print("Attribute analysis completed successfully")
+        print("Attribute analysis completed")
 
         #Return length and columns name to frontend       
         return jsonify({"length": length, "columns": columns})
@@ -55,6 +60,7 @@ def upload_file_2():
         return jsonify({"error": "No selected file"}), 400
 
     try:
+        print('Edge analysis start')
         # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
         global node_df
@@ -70,7 +76,7 @@ def upload_file_2():
         global node_visualization_json_data
         fig_size = 20
         node_visualization_json_data = node_visualization(node_df, fig_size).get_json()
-        print("Node analysis completed successfully")
+        print("Edge analysis completed")
 
         #Return length and columns name to frontend
         return jsonify({"length": length, "columns": columns})
@@ -80,14 +86,18 @@ def upload_file_2():
 
 @app.route('/get-nodedescriptivestat', methods=['GET'])
 def get_nodedescriptivestat():
+    print("Edge statistics export to application view")
     return jsonify(node_visualization_json_data)
 
 @app.route('/get-attributevisualisation', methods=['GET'])
 def get_attributevisualisation():
+    print("Attributes statistics export to application view")
     return jsonify(attribute_visualization_json_data)
 
 @app.route('/get-snowball', methods=['POST'])
-def get_snowball(): 
+def get_snowball():
+
+    print('Snowballing sampling start')
     data = request.json # this is json return from frontend form
     start_node = int(data.get('startNode'))
     num_cycle = int(data.get('numCycle'))
@@ -96,8 +106,9 @@ def get_snowball():
     snowballed_df = snowball(node_df, start_node, num_cycle)
     fig_size = 5
     snowballed_node_visualization_json_data = node_visualization(snowballed_df, fig_size).get_json()
+    print("Snowball data export to application view")
+    
     return jsonify(snowballed_node_visualization_json_data)
-
 
 @app.route('/get-startAlaam', methods=['GET'])
 def get_startAlaam():
@@ -107,24 +118,28 @@ def get_startAlaam():
 @app.route('/get-alaamVariables', methods=['POST'])
 def alaamVariables():
     data = request.json
-    selected_attributes = data.get('selectedAttributes', [])
+    selected_attributes = str(data.get('selectedAttributes', []))
+    print(selected_attributes)
+
     print('Attributes selected for ALAAM analysis: ', selected_attributes)
-    return jsonify({"message": "Data received", "selected_keys": selected_attributes})
+    result = alaam(node_df, attribute_df, selected_attributes)
+
+    return jsonify(result)
 
 
 @app.route('/get-centrality', methods=['POST'])
 def get_centrality():
+    
+    print('Centrality calaulcation start')
     data = request.get_json()
     centrality = data.get('centrality')
     bin_size = int(data.get('binSize'))
-    # You can now use the centrality value for further processing
     print("Selected centrality: ", centrality, "Bin size: ", bin_size)
 
     img_io = create_edge_histogram(centrality, node_df, bin_size)
-    # Convert the image to a base64 string
     img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-
-    # Return the base64 image as JSON response
+    print("Centrality visualisation export to application view")
+    
     return jsonify({'image': img_base64})
 
 

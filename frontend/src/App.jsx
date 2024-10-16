@@ -16,18 +16,23 @@ const FileUploadModule = () => {
     navigate('/viewUploadResult'); // Navigate to the 2nd component route
   };
   return (
-    <div>
-    <FileUpload
-      htmlTitle={"Attribute list"}
-      flaskHost={"http://localhost:5000/upload"}
-    />
-    <FileUpload
-      htmlTitle={"Edge list"}
-      flaskHost={"http://localhost:5000/upload_2"}
-    />
+    <>
+    <div className='grid'>
+      <FileUpload
+        htmlTitle={"Attribute list"}
+        flaskHost={"http://localhost:5000/upload"}
+      />
+      <hr></hr>
+      <FileUpload
+        htmlTitle={"Edge list"}
+        flaskHost={"http://localhost:5000/upload_2"}
+      />
+    </div>
     <hr></hr>
+    <div>
       <button style={{margin: '30px'}}onClick={handleButtonClick}>Confirm upload</button>
     </div>
+    </>
   );
 };
 
