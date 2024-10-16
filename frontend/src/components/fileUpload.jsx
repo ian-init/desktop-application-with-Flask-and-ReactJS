@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import './viewUploadResult.css'
 
 function fileUpload({htmlTitle, flaskHost}) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
-  const [length, setLength] = useState(null);  // State to hold the length of the dataframe
-  const [columns, setColumns] = useState([]);  // State to hold the column names
+  const [length, setLength] = useState(null);
+  const [columns, setColumns] = useState([]);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);

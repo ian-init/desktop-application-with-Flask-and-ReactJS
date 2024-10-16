@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'; 
-import './viewUploadResult.css'
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 
 function Snowball() {
-    
-    // State to hold form data
     const [startNodeAndCycle, setStartNodeAndCycle] = useState({
         startNode: '',
         numCycle: ''
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-
-    // State for fetched data
     const [length, setLength] = useState(null);
     const [density, setDensity] = useState(null);
     const [averageClustering, setAverageClustering] = useState(null);
@@ -29,8 +25,10 @@ function Snowball() {
             [name]: value
         }));
     };
-
-    
+    const navigate = useNavigate();
+    const handleNavigateToAlaam = () => {
+        navigate('/startSnowballAlaam');
+      };
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -43,29 +41,26 @@ function Snowball() {
         };
     }, []);
 
-
     const handleDownloadPDF = () => {
-        const element = document.getElementById('report-content');  // ID of the container you want to export
+        const element = document.getElementById('report-content');
         html2pdf()
-            .set({
-                margin: [10, 10, 10, 10],  // Set margins around the PDF content
-                filename: 'snowball_report.pdf',
-                image: { type: 'jpeg', quality: 0.98 },  // Set image quality
-                html2canvas: {
-                    scale: 2,  // Increase scale for better resolution
-                    logging: true,
-                    width: element.scrollWidth,  // Fit content width
-                },
-                jsPDF: {
-                    unit: 'pt',  // Unit in points (1/72 of an inch)
-                    format: 'a4',  // Set format to A4
-                    orientation: 'landscape',  // Orientation of the PDF
-                }
-            })
-            .from(element)
-            .save();
+        .set({
+            margin: 1, 
+            filename: 'snowball_report.pdf',
+            image: { type: 'jpeg', quality: 1 },  // Set image quality
+            html2canvas: {
+                scale: 5,  // Increase scale for better resolution
+                logging: true,
+            },
+            jsPDF: {
+                unit: 'pt',  // Unit in points (1/72 of an inch)
+                format: 'a4',  // Set format to A4
+                orientation: 'portrait',  // Orientation of the PDF
+            }
+        })
+        .from(element)
+        .save();
     };
-
 
     // Form submit handler to send data to the backend and update the frontend
     const handleSubmit = async (event) => {
@@ -79,10 +74,9 @@ function Snowball() {
                 },
                 body: JSON.stringify(startNodeAndCycle),
             });
-            const result = await response.json(); // Fetch the returned JSON data
+            const result = await response.json();
 
             if (response.ok) {
-                // Update state with the fetched data
                 setLength(result.length);
                 setDensity(result.Density);
                 setColumns(result.columns);
@@ -137,36 +131,39 @@ function Snowball() {
         <div id="report-content">
                 {length !== null && (
                 <div className='grid'>
-                    
                     <div className='container'>
                         <h2>Snowball subset analysis</h2>
                         <p>No. of rows in the subset: {length}</p>
                         <p>Columns: {columns.join(', ')}</p>
                         <table className='table'>
-                            <tr>
-                                <th>Measurement</th>
-                                <th>Value</th>
-                            </tr>
-                            <tr>
-                                <td>Number of Nodes</td>
-                                <td>{nodesNum}</td>
-                            </tr>
-                            <tr>
-                                <td>Number of Edges</td>
-                                <td>{edgesNum}</td>
-                            </tr>
-                            <tr>
-                                <td>Density</td>
-                                <td>{density}</td>
-                            </tr>
-                            <tr>
-                                <td>Average Clustering</td>
-                                <td>{averageClustering}</td>
-                            </tr>
-                            <tr>
-                                <td>Transitivity</td>
-                                <td>{transitivity}</td>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th>Measurement</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Number of Nodes</td>
+                                    <td>{nodesNum}</td>
+                                </tr>
+                                <tr>
+                                    <td>Number of Edges</td>
+                                    <td>{edgesNum}</td>
+                                </tr>
+                                <tr>
+                                    <td>Density</td>
+                                    <td>{density}</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Clustering</td>
+                                    <td>{averageClustering}</td>
+                                </tr>
+                                <tr>
+                                    <td>Transitivity</td>
+                                    <td>{transitivity}</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <div className='container'>
@@ -175,15 +172,16 @@ function Snowball() {
                 </div>    
                 )}
         </div>
-            {length !== null && (
-                <>
-                <hr></hr>
-                <p style={{color: "#FF0000"}}>The clustered network is already saved in to export folder</p>
-                <button onClick={handleDownloadPDF}>Download PDF</button>
-                <br></br>
-                <br></br>
-                </>
-            )}
+        {length !== null && (
+        <p style={{color: "#FF0000"}}>The clustered network is already saved in to export folder</p>
+        )}
+        <hr></hr>
+        {length !== null && (
+        <div style={{ display: "flex", justifyContent: "space-evenly", margin: '30px'}}>
+            <button onClick={handleDownloadPDF}>Download File</button>
+            <button onClick={handleNavigateToAlaam} >Initiate Alaam</button>
+        </div>
+        )}
         </>
     );
 }

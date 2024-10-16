@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 
 function CentralityForm({ setCentrality }) {
   const [localCentrality, setLocalCentrality] = useState('');
-  const [binSize, setBinSize] = useState(''); // State for binSize
+  const [binSize, setBinSize] = useState('');
   const [image, setImage] = useState('');
-  const [showParagraph, setShowParagraph] = useState(true);
 
   const handleSelectChange = (event) => {
     const { name, value } = event.target;
@@ -19,7 +18,6 @@ function CentralityForm({ setCentrality }) {
 
   const handleSubmitToFlask = async (event) => {
     event.preventDefault(); // Prevent form from reloading the page
-    setShowParagraph(false); // Hide paragraph when form is submitted
 
     const response = await fetch('http://localhost:5000/get-centrality', {
       method: 'POST',
@@ -34,14 +32,16 @@ function CentralityForm({ setCentrality }) {
   };
 
   return (
+    <>
+    <h1>Centrality analysis</h1>
     <div className='grid'>
+      <div className='container'>
       <form onSubmit={handleSubmitToFlask}>
         <label>Select a centrality Measurement:</label>
         <select
           name="localCentrality"
           onChange={handleSelectChange}
-          value={localCentrality}
-        >
+          value={localCentrality}>
           <option value="">Please Select</option>
           <option value="Betweenness">Betweenness</option>
           <option value="Closeness">Closeness</option>
@@ -56,20 +56,23 @@ function CentralityForm({ setCentrality }) {
           name="binSize"
           value={binSize}
           onChange={handleSelectChange}
-          required
-        />
+          required/>
 
         <button type="submit">Generate</button>
+        {image !== '' && (
+          <p style={{color: "#FF0000"}}>Histogram already saved in export folder</p>
+        )}
       </form>
 
-      {showParagraph && (
-        <p>
-          You can calculate the centrality measurement &#40;Betweenness, Closeness, Eigenvector, and Clustering Coefficient&#41; of individual edges.
-          The result will be visualized in Histogram.
-        </p>
-      )}
+
+      </div>
+      {image !== '' && (
+      <div className='container'>
       {image && <img src={image} alt="Edge Histogram" />}
+      </div>
+      )}
     </div>
+    </>
   );
 }
 

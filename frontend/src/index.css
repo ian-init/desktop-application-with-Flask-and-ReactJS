@@ -16,10 +16,10 @@
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
 }
 
 p {
@@ -71,7 +71,6 @@ form {
   padding: 10px;
   background-color: #d2d4f8e7;
   color: black;
-  width: 50%;
 }
 
 select {
@@ -87,4 +86,67 @@ input {
   background-color: #e5e6f4e7;
   margin: 5px 20px 5px;
   color: black;
+}
+
+
+/* wrap components on a flex-row */
+.grid {
+  display: flex;
+  gap: 1.5vw;
+  padding:5vh 2.5vw;
+  
+}
+
+.container {
+  width:100%;
+}
+
+.container img {
+width:90%;
+height:50vh;
+}
+
+.table {
+font-family: Arial, Helvetica, sans-serif;
+border-collapse: collapse;
+width: 100%;
+}
+
+.table td, #customers th {
+border: 1px solid #ddd;
+padding: 8px;
+}
+
+.table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table tr:hover {background-color: #ddd;}
+
+.table th {
+padding-top: 12px;
+padding-bottom: 12px;
+background-color: rgb(248, 240, 230);
+}
+
+.alaamhighlight1 {
+  color: rgb(109, 109, 255);
+}
+
+.alaamhighlight2 {
+  color: rgb(255, 119, 119);
+}
+
+
+@media (max-width: 1200px) {
+  .grid {
+    flex-direction: column;
+  }
+
+  .grid {
+    gap:3vh;
+}
+
+@media print {
+  .new-page {
+    page-break-before: always;
+  }
 }

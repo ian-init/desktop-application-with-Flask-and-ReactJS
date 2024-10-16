@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './viewUploadResult.css'
 
 const AttributeDescriptiveStat = () => {
   const [attributeDict, setAttributeDict] = useState({});
@@ -28,18 +27,15 @@ const AttributeDescriptiveStat = () => {
         } catch (error) {
             console.error("Error:", error);
             setError(error);
-            setLoading(false);  // Set loading to false when there is an error
+            setLoading(false);
         }
     };
     fetchResult();
   }, []);  // Empty array ensures this effect runs only once
 
-  // Show loading state
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  // Show error if any
   if (error) {
     return <div>Error: {error.message}</div>;
   }
@@ -47,33 +43,31 @@ const AttributeDescriptiveStat = () => {
   return (
     <>
     <div className='grid'>
-        <div className='container'>
+      <div className='container'>
         <h1>Attribute analysis</h1>
         <p>No. of row in file: {length}</p>
         <p>Column Name: {columns.join(', ')}</p>
         <table className='table'>
-            <thead>
+          <thead>
             <tr>
-                <th>Column Name</th>
-                <th>Unique Values</th>
+              <th>Column Name</th>
+              <th>Unique Values</th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             {Object.keys(attributeDict).map((columnName, index) => (
-                <tr key={index}>
-                <td>{columnName}</td>
-                <td>{Array.isArray(attributeDict[columnName]) ? attributeDict[columnName].join(', ') : attributeDict[columnName]}</td>
-                {/* Ensure the values are joined into a string */}
-                </tr>
+            <tr key={index}>
+              <td>{columnName}</td>
+              <td>{Array.isArray(attributeDict[columnName]) ? attributeDict[columnName].join(', ') : attributeDict[columnName]}</td>
+            </tr>
             ))}
-            </tbody>
+          </tbody>
         </table>
-        </div>
-        <div className='container'>
-                {image && <img src={image} alt="Node Visualization" />}
-        </div>
-    </div>  
-   
+      </div>
+      <div className='container'>
+        {image && <img src={image} alt="Node Visualization" />}
+      </div>
+    </div>
     </>
   );
 };

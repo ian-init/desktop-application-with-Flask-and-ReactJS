@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './viewUploadResult.css'
 
 const NodeDescriptiveStat = () => {
     const [length, setLength] = useState(null);
@@ -47,10 +46,13 @@ const NodeDescriptiveStat = () => {
                         <p>No. of row in file: {length}</p>
                         <p>Column Name: {columns.join(', ')}</p>
                         <table className='table'>
-                            <tr>
-                                <th>Measurement</th>
-                                <th>Value</th>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th>Measurement</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             <tr>
                                 <td>Number of Nodes</td>
                                 <td>{nodesNum}</td>
@@ -71,6 +73,7 @@ const NodeDescriptiveStat = () => {
                                 <td>Transitivity</td>
                                 <td>{transitivity}</td>
                             </tr>
+                            </tbody>
                         </table>
                    
                     </div>
@@ -79,7 +82,7 @@ const NodeDescriptiveStat = () => {
                 )}
             </div>
             <div className='container'>
-                {image && <img  src={image} alt="Edge Visualization" />}
+                {image && <img style={{height: '100%'}}src={image} alt="Edge Visualization" />}
             </div>
         </div>
         </>

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import './viewUploadResult.css'
 
 function startAlaam() {
     const [attributeDict, setAttributeDict] = useState({});
-    const [selectedAttributes, setSelectedAttributes] = useState([]);
+    const [selectedAttribute, setSelectedAttribute] = useState('');
+
+    const [maxRuns, setMaxRuns] = useState('');
+    const [numSubphases, setNumSubphases] = useState('');
+    const [phase3steps, setPhase3steps] = useState('');
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [alaamResults, setAlaamResults] = useState([]); // New state variable for storing results
+    const [alaamResults, setAlaamResults] = useState([]);
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -31,12 +35,13 @@ function startAlaam() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch('http://localhost:5000/get-alaamVariables', {
+        console.log('Submitting attribute:', selectedAttribute);
+        fetch('http://localhost:5000/get-startAlaam', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ selectedAttributes }), // Send the selectedAttributes state variable
+            body: JSON.stringify({ selectedAttribute: selectedAttribute, maxRuns: maxRuns, numSubphases: numSubphases, phase3steps: phase3steps }), // Send the selected attribute
         })
         .then(response => response.json())
         .then(data => {
@@ -44,14 +49,19 @@ function startAlaam() {
             setAlaamResults(data); // Store the results in the alaamResults state
         })
         .catch(error => console.error('Error sending data to backend:', error));
-    }
+    };
 
-    const handleCheckboxChange = (event) => {
-        const attribute = event.target.name;
-        if (event.target.checked) {
-            setSelectedAttributes([...selectedAttributes, attribute]);
-        } else {
-            setSelectedAttributes(selectedAttributes.filter(attr => attr !== attribute));
+    const handleSelectChange = (event) => {
+        const { name, value } = event.target;
+    
+        if (name === 'selectedAttribute') {
+            setSelectedAttribute(value);
+        } else if (name === 'maxRuns') {
+            setMaxRuns(value);
+        } else if (name === 'numSubphases') {
+            setNumSubphases(value);
+        } else if (name === 'phase3steps') {
+            setPhase3steps(value);
         }
     };
 
@@ -63,51 +73,92 @@ function startAlaam() {
         return <div>Error: {error.message}</div>;
     }
 
-    return (
-        <div className='grid'>
-            <div className='container'>
-                <form style={{margin: 'auto'}} onSubmit={handleSubmit}>
-                    <label>Select one attribute for ALAAM:</label>
-                    <select onChange={handleCheckboxChange}>
-                        {Object.keys(attributeDict).map((key) => (
-                            <option key={key} value={key}>
-                                {key}
-                            </option>
-                        ))}
-                    </select>
-                    <button type="submit">Submit</button>
-                </form>
 
-                {/* Render the results table if alaamResults is not empty */}
-                {alaamResults.length > 0 && (
-                    <table className='table'>
-                        <thead>
-                            <tr>
-                                <th>Effect</th>
-                                <th>Lambda</th>
-                                <th>Parameter</th>
-                                <th>StdErr</th>
-                                <th>T-Ratio</th>
-                                <th>SACF</th>
+    return (
+        <>
+        <h1>ALAAMEE Stochastic Approximation</h1>
+        <div className='grid'>
+            <div className='container'>    
+            <form style={{ margin: 'auto' }} onSubmit={handleSubmit}>
+                <label>Select one attribute for ALAAM:</label>
+                <select name="selectedAttribute" onChange={handleSelectChange} value={selectedAttribute}>
+                    <option value="" disabled>Select an attribute</option>
+                    {Object.keys(attributeDict).map((key) => (
+                    <option key={key} value={key}>
+                        {key}
+                    </option>
+                ))}
+                </select>
+                <label htmlFor="maxRuns">Max. estimation runs:</label>
+                <input
+                    type="text"
+                    id="maxRuns"
+                    name="maxRuns"
+                    value={maxRuns}
+                    onChange={handleSelectChange}
+                    required/>
+                <label htmlFor="numSubphases">Subphases:</label>
+                <input
+                    type="text"
+                    id="numSubphases"
+                    name="numSubphases"
+                    value={numSubphases}
+                    onChange={handleSelectChange}
+                    required/>
+                <label htmlFor="phase3steps">Iterations in phase 3:</label>
+                <input
+                    type="text"
+                    id="phase3steps"
+                    name="phase3steps"
+                    value={phase3steps}
+                    onChange={handleSelectChange}
+                    required/>                          
+                <button type="submit">Submit</button>
+            </form>
+                <br></br>
+                <br></br>
+                
+            {alaamResults.length > 0 && (
+            <div className='container'>
+                <table className='table'>
+                    <thead>
+                        <tr>
+                        <th>Effect</th>
+                        <th>Lambda</th>
+                        <th>Parameter</th>
+                        <th>StdErr</th>
+                        <th>T-Ratio</th>
+                        <th>SACF</th>
+                        <th>Param/StdErr</th> {/* New column */}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {alaamResults.map((result, index) => {
+                        const paramStdErrRatio = result.parameter / result.stderr;
+                        const tratio = result.t_ratio;
+                        return (
+                            <tr key={index}>
+                                <td>{result.effect}</td>
+                                <td>{result.lambda}</td>
+                                <td>{result.parameter}</td>
+                                <td>{result.stderr}</td>
+                                <td className={tratio < 0.1 ? 'alaamhighlight2' : ''}>{result.t_ratio}</td>
+                                <td>{result.sacf}</td>
+                                <td className={paramStdErrRatio > 2 ? 'alaamhighlight1' : ''}>{paramStdErrRatio.toFixed(3)}</td> {/* Conditionally applying the CSS class for Param/StdErr Ratio */}
                             </tr>
-                        </thead>
-                        <tbody>
-                            {alaamResults.map((result, index) => (
-                                <tr key={index}>
-                                    <td>{result.effect}</td>
-                                    <td>{result.lambda}</td>
-                                    <td>{result.parameter}</td>
-                                    <td>{result.stderr}</td>
-                                    <td>{result.t_ratio}</td>
-                                    <td>{result.sacf}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                        );
+                        })}
+                    </tbody>
+                </table>
+                <p style={{color: 'rgb(109, 109, 255'}}>2x parameter estimate than standard error indicates the paramet is significant</p>
+                <p style={{color: 'rgb(255, 119, 119)'}}>Less than 0.1 t-ratio indicates estimatation hasconverged</p>
+            </div>
+            )}
             </div>
         </div>
+        </>
     );
+
 }
 
 export default startAlaam;

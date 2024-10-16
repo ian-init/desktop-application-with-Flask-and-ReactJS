@@ -5,9 +5,7 @@ import FileUpload from './components/fileUpload.jsx'
 import ViewUploadResult from './components/viewUploadResult.jsx'
 import StartAlaam from './components/startAlaam.jsx';
 import Snowball from './components/snowball.jsx';
-
-import './App.css';
-import '../src/components/viewUploadResult.css'
+import SnowballAlaam from './components/startSnowballAlaam.jsx';
 
 const FileUploadModule = () => {
   const navigate = useNavigate();
@@ -50,6 +48,7 @@ function App() {
         <Route path="/viewUploadResult" element={<ViewUploadResult />} />
         <Route path="/startAlaam" element={<StartAlaam />} />
         <Route path="/snowball" element={<Snowball />} />
+        <Route path="/startSnowballAlaam" element={<SnowballAlaam />} />
       </Routes>
     </Router>
 	</>
