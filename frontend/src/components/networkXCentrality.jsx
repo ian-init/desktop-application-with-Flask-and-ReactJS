@@ -9,16 +9,15 @@ function CentralityForm({ setCentrality }) {
     const { name, value } = event.target;
 
     if (name === 'localCentrality') {
-      setLocalCentrality(value); // Update state for localCentrality
-      setCentrality(value); // Update the parent component's state if needed
+      setLocalCentrality(value);
+      setCentrality(value); // Update the parent component's state
     } else if (name === 'binSize') {
-      setBinSize(value); // Update state for binSize
+      setBinSize(value);
     }
   };
 
   const handleSubmitToFlask = async (event) => {
     event.preventDefault(); // Prevent form from reloading the page
-
     const response = await fetch('http://localhost:5000/get-centrality', {
       method: 'POST',
       headers: {
@@ -63,7 +62,6 @@ function CentralityForm({ setCentrality }) {
           <p style={{color: "#FF0000"}}>Histogram already saved in export folder</p>
         )}
       </form>
-
 
       </div>
       {image !== '' && (

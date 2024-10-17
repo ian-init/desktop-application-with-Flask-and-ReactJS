@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 function startSnowballAlaam() {
     const [attributeDict, setAttributeDict] = useState({});
     const [selectedAttribute, setSelectedAttribute] = useState('');
-
     const [maxRuns, setMaxRuns] = useState('');
     const [numSubphases, setNumSubphases] = useState('');
     const [phase3steps, setPhase3steps] = useState('');
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
     const [alaamResults, setAlaamResults] = useState([]);
 
     useEffect(() => {
@@ -31,7 +31,36 @@ function startSnowballAlaam() {
             }
         };
         fetchResult();
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js";
+        script.async = true;
+        document.body.appendChild(script);
+        // Cleanup function to remove the script when the component unmounts
+        return () => {
+            document.body.removeChild(script);
+        };
     }, []);
+
+    const handleDownloadPDF = () => {
+        const element = document.getElementById('report-content');
+        html2pdf()
+        .set({
+            margin: 10, 
+            filename: 'alaam_report.pdf',
+            image: { type: 'jpeg', quality: 1 },  // Set image quality
+            html2canvas: {
+                scale: 5,  // Increase scale for better resolution
+                logging: true,
+            },
+            jsPDF: {
+                unit: 'pt',  // Unit in points (1/72 of an inch)
+                format: 'a4',  // Set format to A4
+                orientation: 'portrait',  // Orientation of the PDF
+            }
+        })
+        .from(element)
+        .save();
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -40,7 +69,7 @@ function startSnowballAlaam() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ selectedAttribute: selectedAttribute, maxRuns: maxRuns, numSubphases: numSubphases, phase3steps: phase3steps }), // Send the selected attribute
+            body: JSON.stringify({ selectedAttribute: selectedAttribute, maxRuns: maxRuns, numSubphases: numSubphases, phase3steps: phase3steps }),
         })
         .then(response => response.json())
         .then(data => {
@@ -87,6 +116,7 @@ function startSnowballAlaam() {
                         </option>
                     ))}
                     </select>
+                    <br></br>
                     <label htmlFor="maxRuns">Max. estimation runs:</label>
                     <input
                         type="text"
@@ -95,6 +125,7 @@ function startSnowballAlaam() {
                         value={maxRuns}
                         onChange={handleSelectChange}
                         required/>
+                    <br></br>
                     <label htmlFor="numSubphases">Subphases:</label>
                     <input
                         type="text"
@@ -103,6 +134,7 @@ function startSnowballAlaam() {
                         value={numSubphases}
                         onChange={handleSelectChange}
                         required/>
+                    <br></br>
                     <label htmlFor="phase3steps">Iterations in phase 3:</label>
                     <input
                         type="text"
@@ -116,33 +148,52 @@ function startSnowballAlaam() {
                 <br></br>
                 <br></br>
                 {alaamResults.length > 0 && (
-                <div className='container'>
-                    <table className='table'>
-                        <thead>
-                            <tr>
+                <div id='report-content'>
+                    <div className='container'>
+                        <table className='table'>
+                            <thead>
+                                <tr>
                                 <th>Effect</th>
                                 <th>Lambda</th>
                                 <th>Parameter</th>
                                 <th>StdErr</th>
                                 <th>T-Ratio</th>
                                 <th>SACF</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {alaamResults.map((result, index) => (
-                                <tr key={index}>
-                                    <td>{result.effect}</td>
-                                    <td>{result.lambda}</td>
-                                    <td>{result.parameter}</td>
-                                    <td>{result.stderr}</td>
-                                    <td>{result.t_ratio}</td>
-                                    <td>{result.sacf}</td>
+                                <th>Param/StdErr</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {alaamResults.map((result, index) => {
+                                const paramStdErrRatio = result.parameter / result.stderr;
+                                const tratio = result.t_ratio;
+                                return (
+                                    <tr key={index}>
+                                        <td>{result.effect}</td>
+                                        <td>{result.lambda}</td>
+                                        <td>{result.parameter}</td>
+                                        <td>{result.stderr}</td>
+                                        <td className={tratio < 0.1 ? 'alaamhighlight2' : ''}>{result.t_ratio}</td>
+                                        <td>{result.sacf}</td>
+                                        <td className={paramStdErrRatio > 2 ? 'alaamhighlight1' : ''}>{paramStdErrRatio.toFixed(3)}</td>
+                                    </tr>
+                                );
+                                })}
+                            </tbody>
+                        </table>
+                        <p style={{color: 'rgb(109, 109, 255'}}>A ratio of parameter estimate over standard error &#62;2 indicates the paramet is significant</p>
+                        <p style={{color: 'rgb(109, 109, 255)'}}>Less than 0.1 t-ratio indicates estimatation has converged</p>
+                        <br></br>
+                    </div>
                 </div>
-                )}
+
+            )}
+            {alaamResults.length > 0 && (
+                <div>
+                    <hr></hr>
+                    <br></br>
+                    <button onClick={handleDownloadPDF}>Download Report</button>
+                </div>
+            )}
             </div>
         </div>
         </>

@@ -11,7 +11,6 @@ function viewUploadResult() {
   const navigate = useNavigate();
   const [centrality, setCentrality] = useState('');
 
-  // Function to navigate to the /startAlaam route
   const handleNavigateToAlaam = () => {
     navigate('/startAlaam');
   };
@@ -53,7 +52,6 @@ function viewUploadResult() {
     .save();
     };
 
-
   return (
     <>
     <div id='descriptive_stat'>
@@ -61,7 +59,7 @@ function viewUploadResult() {
       <div className="html2pdf__page-break"></div>
       <NodeDescriptiveStat />
     </div>
-      <button onClick={handleDownloadDescriptiveStat}>Download descriptive statistics</button>
+      <button onClick={handleDownloadDescriptiveStat}>Download report</button>
       <br></br>
       <br></br>
       <hr></hr>

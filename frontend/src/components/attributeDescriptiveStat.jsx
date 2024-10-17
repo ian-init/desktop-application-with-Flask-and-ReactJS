@@ -8,7 +8,7 @@ const AttributeDescriptiveStat = () => {
   const [length, setLength] = useState(null);
   const [columns, setColumns] = useState([]);
 
-  // Fetch the dictionary from backend when the component mounts
+  // Fetch dictionary
   useEffect(() => {
     const fetchResult = async () => {
         try {

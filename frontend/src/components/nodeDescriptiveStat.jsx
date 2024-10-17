@@ -10,7 +10,7 @@ const NodeDescriptiveStat = () => {
     const [columns, setColumns] = useState([]);
     const [image, setImage] = useState('');
 
-    // Fetch the json from backend when the component mounts
+    // Fetch json format
     useEffect(() => {
         const fetchResult = async () => {
             try {

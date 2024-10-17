@@ -11,6 +11,7 @@ from dataELT import attributre_visualization
 from dataELT import create_edge_histogram
 from dataELT import snowball
 from alaamintegration import alaam
+from alaamintegration import ergm
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -133,7 +134,7 @@ def startAlaam():
 
     print('Attributes selected for ALAAM analysis: ', selected_attribute, max_runs, num_subphases, phase_3_steps)
     # result = alaam(node_df, attribute_df, selected_attributes, max_runs, num_subphases, phase_3_steps)
-    result = [{'effect': 'DensityA', 'lambda': 2.0, 'parameter': np.float64(-1.1592), 'stderr': np.float64(0.219), 't_ratio': np.float64(0.028), 'sacf': -0.042}, {'effect': 'ActivityA', 'lambda': 2.0, 'parameter': np.float64(-0.3516), 'stderr': np.float64(0.062), 't_ratio': np.float64(0.039), 'sacf': -0.038}, {'effect': 'ContagionA', 'lambda': 2.0, 'parameter': np.float64(0.6237), 'stderr': np.float64(0.139), 't_ratio': np.float64(0.014), 'sacf': -0.065}, {'effect': 'sexF_oOA', 'lambda': 2.0, 'parameter': np.float64(0.1983), 'stderr': np.float64(0.19), 't_ratio': np.float64(0.075), 'sacf': -0.033}, {'effect': 'loc_oOA', 'lambda': 2.0, 'parameter': np.float64(0.5445), 'stderr': np.float64(0.196), 't_ratio': np.float64(0.002), 'sacf': -0.041}, {'effect': 'intern_oOA', 'lambda': 2.0, 'parameter': np.float64(-0.15), 'stderr': np.float64(0.184), 't_ratio': np.float64(-0.0), 'sacf': 0.013}, {'effect': 'fails_oOA', 'lambda': 2.0, 'parameter': np.float64(0.8324), 'stderr': np.float64(0.253), 't_ratio': np.float64(0.008), 'sacf': 0.054}, {'effect': 'finstress_oOA', 'lambda': 2.0, 'parameter': np.float64(0.494), 'stderr': np.float64(0.095), 't_ratio': np.float64(-0.069), 'sacf': 0.003}]
+    result = [{'network_type': 'undirected', 'effect': 'DensityA', 'lambda': 2.0, 'parameter': np.float64(-1.3104), 'stderr': np.float64(0.206), 't_ratio': np.float64(-0.083), 'sacf': 0.048}, {'network_type': 'undirected', 'effect': 'ActivityA', 'lambda': 2.0, 'parameter': np.float64(-0.379), 'stderr': np.float64(0.077), 't_ratio': np.float64(-0.032), 'sacf': -0.09}, {'network_type': 'undirected', 'effect': 'ContagionA', 'lambda': 2.0, 'parameter': np.float64(0.8135), 'stderr': np.float64(0.173), 't_ratio': np.float64(-0.023), 'sacf': -0.046}, {'network_type': 'undirected', 'effect': 'sexF_oOA', 'lambda': 2.0, 'parameter': np.float64(0.2032), 'stderr': np.float64(0.174), 't_ratio': np.float64(-0.071), 'sacf': -0.082}, {'network_type': 'undirected', 'effect': 'loc_oOA', 'lambda': 2.0, 'parameter': np.float64(0.5368), 'stderr': np.float64(0.185), 't_ratio': np.float64(-0.023), 'sacf': 0.012}, {'network_type': 'undirected', 'effect': 'intern_oOA', 'lambda': 2.0, 'parameter': np.float64(-0.1816), 'stderr': np.float64(0.18), 't_ratio': np.float64(0.018), 'sacf': -0.006}, {'network_type': 'undirected', 'effect': 'fails_oOA', 'lambda': 2.0, 'parameter': np.float64(0.7786), 'stderr': np.float64(0.23), 't_ratio': np.float64(-0.082), 'sacf': -0.039}, {'network_type': 'undirected', 'effect': 'finstress_oOA', 'lambda': 2.0, 'parameter': np.float64(0.4734), 'stderr': np.float64(0.094), 't_ratio': np.float64(-0.085), 'sacf': -0.055}]
 
     return jsonify(result)
 
@@ -156,7 +157,7 @@ def startSnowballAlaam():
 @app.route('/get-centrality', methods=['POST'])
 def get_centrality():
     
-    print('Centrality calaulcation start')
+    print('Centrality start')
     data = request.get_json()
     centrality = data.get('centrality')
     bin_size = int(data.get('binSize'))
@@ -167,6 +168,17 @@ def get_centrality():
     print("Centrality visualisation export to application view")
     
     return jsonify({'image': img_base64})
+
+
+@app.route('/get-ergm', methods=['POST'])
+def get_ergm():
+    print('ERGM start')
+
+    result = ergm()
+
+    # result = {'coefficients': [{'Coefficient': 'edges', 'Estimate': -0.09647229107024935, 'Std. Error': 3.1580143637265135, 'z value': -0.030548401609044717, 'Pr(>|z|)': 0.9756296924727037}, {'Coefficient': 'nodematch.dropout', 'Estimate': 0.2360397853706623, 'Std. Error': 4.085928200296695, 'z value': 0.05776895084782022, 'Pr(>|z|)': 0.9539326704941551}], 'significance_codes': "0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1", 'deviance': {'null': np.float64(4541.500327028751), 'residual': np.float64(4496.265839153273), 'df_null': 3275, 'df_residual': 3274}, 'fit': {'AIC': np.float64(4500.265839153273), 'BIC': np.float64(4512.454596043219)}}
+
+    return jsonify(result)
 
 
 if __name__ == '__main__':
