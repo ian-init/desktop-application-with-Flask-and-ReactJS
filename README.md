@@ -3,15 +3,17 @@
 <ol>
   <li>React.js with Vite</li>
   <ul>
-  <li>Required library: react-router-dom, CORS</li>
-    </ul>
+    <li>Required library: react-router-dom, CORS</li>
+  </ul>
   <li>Material UI (day 2 implementation)</li>
 </ol>
 <h2>Backend</h2>
 <ul>
   <li>Flask</li>
-  <li>Required library: Python, Pandas, Numpy, Matplotlib, Scipy, Scikit-learn </li>
-  <li>External library: ALAAMEE functionality import from https://github.com/stivalaa/ALAAMEE </li>
+  <ul>
+    <li>Required library: Python, Pandas, Numpy, Matplotlib, Scipy, Scikit-learn</li>
+    <li>External library: ALAAMEE functionality import from https://github.com/stivalaa/ALAAMEE</li>
+  </ul>
 </ul>
 <h2>Provision service</h2>
 <ol>
