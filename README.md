@@ -3,7 +3,7 @@
 <ol>
   <li>React.js with Vite</li>
   <li style="margin-left:2em">Required library: react-router-dom, CORS</li>
-  <li>Material UI</li>
+  <li>Material UI (day 2 implementation)</li>
 </ol>
 <h2>Backend</h2>
 <ol>
@@ -13,9 +13,9 @@
 </ol>
 <h2>Provision service</h2>
 <ol>
-  <p>React</p>
+  <h4>React</h4>
   <li>Run npm install on ./frontend</li>
   <li>Run npm run dev to start server</li>
-  <p>Flask</p>
+  <h4>Flask</h4>
   <li>Run python app.py on ./backend</li>
 </ol>
