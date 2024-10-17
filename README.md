@@ -2,7 +2,7 @@
 <h2>Frontend</h2>
 <ol>
   <li>React.js with Vite</li>
-  <li>Required library: react-router-dom, CORS</li>
+  <p>Required library: react-router-dom, CORS</p>
   <li>Material UI (day 2 implementation)</li>
 </ol>
 <h2>Backend</h2>
