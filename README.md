@@ -7,7 +7,7 @@
   <li>React.js with Vite</li>
   <li>Material UI (day 2 implementation)</li>
 </ol>
-<h2>Backend</h2>
+<h4>Backend</h4>
 <ul>
   <li>Flask</li>
   <ul>
@@ -15,7 +15,7 @@
     <li><em>Codes form an external Git repo https://github.com/stivalaa/ALAAMEE is extracted and included in this repo</em></li>
   </ul>
 </ul>
-<p>* Remark: there is a typo in backend .py. The named "node" variables and functions should actually mean "edge" of the network.</p>
+<p><em>* Remark: there is a typo in backend .py. The named "node" variables and functions should actually mean "edge" of the network.</em></p>
 <hr>
 <h4>Provision service</h4>
 <ol>
@@ -31,6 +31,8 @@
   </ul>
 </ol>
 <br>
-<p><em>For the puprpose of demonstration, the repo is designed to work with the tables in the ./Sample Data folder</em>
-
-
+<p><em>* Remark: For the puprpose of demonstration, the repo is designed to work with the tables in the ./Sample Data folder</em>
+<hr>
+<h4>sample screen</p>
+<img src='https://raw.githubusercontent.com/ian-init/desktop-application-with-Flask-and-ReactJS/refs/heads/main/frontend/src/assets/sample%20screenshot/data%20input.jpg'>
+<img src='https://raw.githubusercontent.com/ian-init/desktop-application-with-Flask-and-ReactJS/refs/heads/main/frontend/src/assets/sample%20screenshot/data_visualization.png'>
