@@ -19,7 +19,7 @@ import matplotlib
 matplotlib.use('Agg')  # Use the Agg backend for non-GUI environments
 import networkx as nx
 
-
+# functions from ALAAMEE repository
 from ALAAMEE.Graph import Graph
 from ALAAMEE.Digraph import Digraph
 from ALAAMEE.BipartiteGraph import BipartiteGraph, MODE_A, MODE_B
@@ -284,12 +284,9 @@ def determine_network_type(filename):
 
 def ergm():
     try:
-        # Read the network file
-        network_file = pd.read_csv(r"C:\Users\Name\OneDrive - Swinburne University\2024 S1\COS70008\University students 643\edgelist_u643_VPNet - Copy.txt", sep='\t')
-        
-        # Read the attribute file
-        attribute_file = pd.read_csv(r"C:\Users\Name\OneDrive - Swinburne University\2024 S1\COS70008\University students 643\attributes_u643_VPNet.txt", sep='\t')
-        
+        # hard coded for demostration purpose
+        network_file = pd.read_csv(r"C:\..\..\edgelist_u643_VPNet - Copy.txt", sep='\t')        
+        attribute_file = pd.read_csv(r"C:\..\..\attributes_u643_VPNet.txt", sep='\t')
         selected_attribute = 'dropout'
         
         # Print column names to verify
@@ -311,8 +308,6 @@ def ergm():
             gof_output_file_path="ergm_gof_results.png"
         )
         print("ERGM-like analysis completed successfully.")
-
-        print(ergm_results)
         
         return ergm_results
 

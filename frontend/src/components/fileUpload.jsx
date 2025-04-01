@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 function fileUpload({htmlTitle, flaskHost}) {
   const [selectedFile, setSelectedFile] = useState(null);
+   
   const [message, setMessage] = useState('');
   const [length, setLength] = useState(null);
   const [columns, setColumns] = useState([]);
@@ -16,6 +17,7 @@ function fileUpload({htmlTitle, flaskHost}) {
       return;
     }
 
+    // form submission and fetch returned dictionary
     const formData = new FormData();
     formData.append('file', selectedFile);
 
@@ -24,7 +26,7 @@ function fileUpload({htmlTitle, flaskHost}) {
         method: 'POST',
         body: formData,
       });
-
+      
       if (!response.ok) {
         const errorData = await response.json();
         setMessage(errorData.error || 'An error occurred');

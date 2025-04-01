@@ -14,8 +14,7 @@ function startAlaam() {
     const [alaamResults, setAlaamResults] = useState([]);
     const [networkType, setNetworkType] = useState("");
 
-    const navigate = useNavigate();
-
+    // fetch attribute list of dataset 
     useEffect(() => {
         const fetchResult = async () => {
             try {
@@ -35,6 +34,7 @@ function startAlaam() {
             }
         };
         fetchResult();
+        // import html2pdf
         const script = document.createElement('script');
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js";
         script.async = true;
@@ -66,6 +66,7 @@ function startAlaam() {
         .save();
     };
 
+    // handle form value and submission
     const handleSubmit = (event) => {
         event.preventDefault();
         fetch('http://localhost:5000/get-startAlaam', {
@@ -84,7 +85,6 @@ function startAlaam() {
         })
         .catch(error => console.error('Error sending data to backend:', error));
     };
-
     const handleSelectChange = (event) => {
         const { name, value } = event.target;
     
@@ -98,7 +98,8 @@ function startAlaam() {
             setPhase3steps(value);
         }
     };
-
+    
+    const navigate = useNavigate();
     const handleNavigateToERGM = () => {
         navigate('/ergm');
     };
@@ -106,11 +107,9 @@ function startAlaam() {
     if (loading) {
         return <div>Loading...</div>;
     }
-
     if (error) {
         return <div>Error: {error.message}</div>;
     }
-
 
     return (
         <>
@@ -156,8 +155,8 @@ function startAlaam() {
                     required/>                          
                 <button type="submit">Submit</button>
             </form>
-                <br></br>
-                <br></br>
+            <br></br>
+            <br></br>
                 
             {alaamResults.length > 0 && (
                 <div id='report-content'>
@@ -210,7 +209,6 @@ function startAlaam() {
         </div>
         </>
     );
-
 }
 
 export default startAlaam;

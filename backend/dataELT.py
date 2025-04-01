@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # Make sure this line is present
+from flask_cors import CORS
+
 import base64
 import io
-from PIL import Image
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,22 +10,22 @@ import matplotlib
 matplotlib.use('Agg')  # Use the Agg backend for non-GUI environments
 import networkx as nx
 
+from PIL import Image
 from datetime import date
 from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# Initialize with some sample data for testing purposes
-
+# for file save timestamp
 now = datetime.now()
 current_time = now.strftime("%H-%M-%S")
 today = date.today()
 
+
 def node_visualization(dataframe, fig_size, filename):
 
-    print('Visualising edges...')
-    # extract csv metadata    
+    print('Visualising edges...')   
     edge_list = dataframe
     columns = edge_list.columns.tolist()
     length = len(edge_list)
@@ -39,7 +39,7 @@ def node_visualization(dataframe, fig_size, filename):
     transitivity = nx.transitivity(G)    
     print("NetworkX descriptive statistics completed")
 
-    # Edge graph
+    # edge graph ploy
     plt.figure(figsize=(fig_size, fig_size))
     nx.draw(G, with_labels=False, node_size=10, linewidths=1, font_size=8)
 
@@ -50,12 +50,7 @@ def node_visualization(dataframe, fig_size, filename):
     plt.savefig(img, format='png')
     plt.close()
     img.seek(0)
-    '''
 
-    edge_visualization_plot.savefig('edge_visualization.png')
-        sampled_df.to_csv
-
-    '''
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
 
     response_data = {
@@ -75,8 +70,7 @@ def node_visualization(dataframe, fig_size, filename):
 
 def attributre_visualization(dataframe, filename):
 
-    print('Visualising attributes...')
-    # extract csv metadata    
+    print('Visualising attributes...') 
     df = pd.DataFrame(dataframe)
     length = len(df)
     columns = df.columns.tolist()
@@ -87,10 +81,10 @@ def attributre_visualization(dataframe, filename):
 
     # Visualise data using stacked bar 
     stack_bar_data = df_split
-    stack_bar_data = stack_bar_data.drop(['Label'], axis=1)
+    stack_bar_data = stack_bar_data.drop(['Label'], axis=1) # For the purpose of demostarion of given sample dataset, non-attribute columns removed
  
     unique_value = []
-    for i in range(len(columns) -2):
+    for i in range(len(columns) -2): 
         unique_value += stack_bar_data[columns[i]].unique().tolist()
     unique_value = set(unique_value)
 
@@ -112,7 +106,7 @@ def attributre_visualization(dataframe, filename):
 
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
 
-    # extract attributes values and show in table
+    # extract attributes name for downstream form selection 
     attribute_dict = {}
     for i in range(len(columns) -2):
         attribute_dict[columns[i]] = df_split[columns[i]].unique().tolist()
@@ -145,7 +139,7 @@ def create_edge_histogram(selectedCentrality, node_df, bin_size, filename):
     elif select_centrality == "ClusteringCoefficient":
         vis = nx.clustering(G)
 
-    # Generate centrality histgrom
+    # histogram plot
     vis_value = list(vis.values())
     plt.hist(vis_value, bins=bin_size)
     
@@ -159,6 +153,7 @@ def create_edge_histogram(selectedCentrality, node_df, bin_size, filename):
 
     print("Histogram generated")
     return img
+
 
 def snowball(dataframe, start_node, num_cycle, filename):
 

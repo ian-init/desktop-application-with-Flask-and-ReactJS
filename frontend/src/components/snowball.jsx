@@ -6,8 +6,7 @@ function Snowball() {
         startNode: '',
         numCycle: ''
     });
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+
     const [length, setLength] = useState(null);
     const [density, setDensity] = useState(null);
     const [averageClustering, setAverageClustering] = useState(null);
@@ -17,6 +16,9 @@ function Snowball() {
     const [columns, setColumns] = useState([]);
     const [image, setImage] = useState('');
 
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     // Handler to manage form input changes
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -25,11 +27,13 @@ function Snowball() {
             [name]: value
         }));
     };
+    
     const navigate = useNavigate();
     const handleNavigateToAlaam = () => {
         navigate('/startSnowballAlaam');
       };
 
+    // import html2pdf
     useEffect(() => {
         const script = document.createElement('script');
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js";

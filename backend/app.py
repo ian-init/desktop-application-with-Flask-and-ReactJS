@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 import base64
 import io
-
 import pandas as pd
 import numpy as np
 
+# functions from own repository  
 from dataELT import node_visualization
 from dataELT import attributre_visualization
 from dataELT import create_edge_histogram
@@ -32,21 +33,22 @@ def upload_file():
         print('Attribute analysis start')
         # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("utf-8"))
+
+        # downstream functions points to this same source
         global attribute_df
         attribute_df = pd.read_csv(stream)
 
-        # Pass back basic information to frontend
+        # extract metadata
         length = len(attribute_df)
         columns = attribute_df.columns.tolist()
         print("Attribut list upload successfully, length of list: ", length)
         print("Name of attributes: ", columns)
 
-        # Pass DataFrame to cleaning module
+        # downstream functions points to this same extracted metadata
         global attribute_visualization_json_data
         attribute_visualization_json_data = attributre_visualization(attribute_df, attribute_filename).get_json()
         print("Attribute analysis completed")
 
-        #Return length and columns name to frontend       
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -67,27 +69,28 @@ def upload_file_2():
         print('Edge analysis start')
         # Read the file directly into a pandas DataFrame
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+        
+        # downstream functions points to this same source
         global node_df
         node_df = pd.read_csv(stream, delim_whitespace=True, comment='*')
         
-        # Pass back basic information to frontend
+        # extract metadata
         length = len(node_df)
         columns = node_df.columns.tolist()
         print("Node list upload successfully, length of list: ", length)
         print("Name of attributes: ", columns)
 
-        # Pass DataFrame to visualisation module                
+        # downstream functions points to this same extracted metadata                
         global node_visualization_json_data
         fig_size = 30
         node_visualization_json_data = node_visualization(node_df, fig_size, edge_filename).get_json()
         print("Edge analysis completed")
 
-        #Return length and columns name to frontend
         return jsonify({"length": length, "columns": columns})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+# route to return descriptive stat and visualisation
 @app.route('/get-nodedescriptivestat', methods=['GET'])
 def get_nodedescriptivestat():
     print("Edge statistics export to application view")
@@ -98,6 +101,7 @@ def get_attributevisualisation():
     print("Attributes statistics export to application view")
     return jsonify(attribute_visualization_json_data)
 
+# route for selected snowball parameters and output return
 @app.route('/get-snowball', methods=['POST'])
 def get_snowball():
 
@@ -107,6 +111,7 @@ def get_snowball():
     num_cycle = int(data.get('numCycle'))
     print('Parameters selected for snowball: Start node: ', start_node, 'No. of cycle: ', num_cycle)
     
+    # set global to pass it to ALAAM module
     global snowballed_df
     snowballed_df = snowball(node_df, start_node, num_cycle, edge_filename)
 
@@ -116,32 +121,33 @@ def get_snowball():
     
     return jsonify(snowballed_node_visualization_json_data)
 
+# rotue to get list of attributes of source 
 @app.route('/get-startAlaam', methods=['GET'])
 def get_startAlaam():
     key_list = list(attribute_visualization_json_data)
     print(key_list)
     return jsonify(key_list)
 
-
+# route for selected ALAAm parameters and output return 
 @app.route('/get-startAlaam', methods=['POST'])
 def startAlaam():
-    data = request.get_json()
-    
+    data = request.get_json() # this is json return from frontend form
     selected_attribute = data.get('selectedAttribute')
     max_runs = data.get('maxRuns')
     num_subphases = data.get('numSubphases')
     phase_3_steps = data.get('phase3steps')
 
     print('Attributes selected for ALAAM analysis: ', selected_attribute, max_runs, num_subphases, phase_3_steps)
-    # result = alaam(node_df, attribute_df, selected_attributes, max_runs, num_subphases, phase_3_steps)
-    result = [{'network_type': 'undirected', 'effect': 'DensityA', 'lambda': 2.0, 'parameter': np.float64(-1.3104), 'stderr': np.float64(0.206), 't_ratio': np.float64(-0.083), 'sacf': 0.048}, {'network_type': 'undirected', 'effect': 'ActivityA', 'lambda': 2.0, 'parameter': np.float64(-0.379), 'stderr': np.float64(0.077), 't_ratio': np.float64(-0.032), 'sacf': -0.09}, {'network_type': 'undirected', 'effect': 'ContagionA', 'lambda': 2.0, 'parameter': np.float64(0.8135), 'stderr': np.float64(0.173), 't_ratio': np.float64(-0.023), 'sacf': -0.046}, {'network_type': 'undirected', 'effect': 'sexF_oOA', 'lambda': 2.0, 'parameter': np.float64(0.2032), 'stderr': np.float64(0.174), 't_ratio': np.float64(-0.071), 'sacf': -0.082}, {'network_type': 'undirected', 'effect': 'loc_oOA', 'lambda': 2.0, 'parameter': np.float64(0.5368), 'stderr': np.float64(0.185), 't_ratio': np.float64(-0.023), 'sacf': 0.012}, {'network_type': 'undirected', 'effect': 'intern_oOA', 'lambda': 2.0, 'parameter': np.float64(-0.1816), 'stderr': np.float64(0.18), 't_ratio': np.float64(0.018), 'sacf': -0.006}, {'network_type': 'undirected', 'effect': 'fails_oOA', 'lambda': 2.0, 'parameter': np.float64(0.7786), 'stderr': np.float64(0.23), 't_ratio': np.float64(-0.082), 'sacf': -0.039}, {'network_type': 'undirected', 'effect': 'finstress_oOA', 'lambda': 2.0, 'parameter': np.float64(0.4734), 'stderr': np.float64(0.094), 't_ratio': np.float64(-0.085), 'sacf': -0.055}]
+    # harded code the returned value for live demostration purpose as ALAAM take +10 mins to run 
+    execute_alaam = [{'network_type': 'undirected', 'effect': 'DensityA', 'lambda': 2.0, 'parameter': np.float64(-1.3104), 'stderr': np.float64(0.206), 't_ratio': np.float64(-0.083), 'sacf': 0.048}, {'network_type': 'undirected', 'effect': 'ActivityA', 'lambda': 2.0, 'parameter': np.float64(-0.379), 'stderr': np.float64(0.077), 't_ratio': np.float64(-0.032), 'sacf': -0.09}, {'network_type': 'undirected', 'effect': 'ContagionA', 'lambda': 2.0, 'parameter': np.float64(0.8135), 'stderr': np.float64(0.173), 't_ratio': np.float64(-0.023), 'sacf': -0.046}, {'network_type': 'undirected', 'effect': 'sexF_oOA', 'lambda': 2.0, 'parameter': np.float64(0.2032), 'stderr': np.float64(0.174), 't_ratio': np.float64(-0.071), 'sacf': -0.082}, {'network_type': 'undirected', 'effect': 'loc_oOA', 'lambda': 2.0, 'parameter': np.float64(0.5368), 'stderr': np.float64(0.185), 't_ratio': np.float64(-0.023), 'sacf': 0.012}, {'network_type': 'undirected', 'effect': 'intern_oOA', 'lambda': 2.0, 'parameter': np.float64(-0.1816), 'stderr': np.float64(0.18), 't_ratio': np.float64(0.018), 'sacf': -0.006}, {'network_type': 'undirected', 'effect': 'fails_oOA', 'lambda': 2.0, 'parameter': np.float64(0.7786), 'stderr': np.float64(0.23), 't_ratio': np.float64(-0.082), 'sacf': -0.039}, {'network_type': 'undirected', 'effect': 'finstress_oOA', 'lambda': 2.0, 'parameter': np.float64(0.4734), 'stderr': np.float64(0.094), 't_ratio': np.float64(-0.085), 'sacf': -0.055}]
+    # Code to execute ALAAM: result = alaam(node_df, attribute_df, selected_attributes, max_runs, num_subphases, phase_3_steps)
+    
+    return jsonify(execute_alaam)
 
-    return jsonify(result)
-
-
+# route for ALAAm using snowballed cluster 
 @app.route('/get-startSnowballAlaam', methods=['POST'])
 def startSnowballAlaam():
-    data = request.get_json()
+    data = request.get_json() # this is json return from frontend form
     print(data)
     selected_attribute = data.get('selectedAttribute')
     max_runs = int(data.get('maxRuns'))
@@ -153,12 +159,12 @@ def startSnowballAlaam():
 
     return jsonify(result)
 
-
+# route for selected centrality parameters and output return
 @app.route('/get-centrality', methods=['POST'])
 def get_centrality():
     
     print('Centrality start')
-    data = request.get_json()
+    data = request.get_json() # this is json return from frontend form
     centrality = data.get('centrality')
     bin_size = int(data.get('binSize'))
     print("Selected centrality: ", centrality, "Bin size: ", bin_size)
@@ -169,16 +175,13 @@ def get_centrality():
     
     return jsonify({'image': img_base64})
 
-
+# route for ergm
 @app.route('/get-ergm', methods=['POST'])
 def get_ergm():
     print('ERGM start')
-
-    result = ergm()
-
-    # result = {'coefficients': [{'Coefficient': 'edges', 'Estimate': -0.09647229107024935, 'Std. Error': 3.1580143637265135, 'z value': -0.030548401609044717, 'Pr(>|z|)': 0.9756296924727037}, {'Coefficient': 'nodematch.dropout', 'Estimate': 0.2360397853706623, 'Std. Error': 4.085928200296695, 'z value': 0.05776895084782022, 'Pr(>|z|)': 0.9539326704941551}], 'significance_codes': "0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1", 'deviance': {'null': np.float64(4541.500327028751), 'residual': np.float64(4496.265839153273), 'df_null': 3275, 'df_residual': 3274}, 'fit': {'AIC': np.float64(4500.265839153273), 'BIC': np.float64(4512.454596043219)}}
-
-    return jsonify(result)
+    ergm_result = ergm()
+    print("ERGM result export to application view")
+    return jsonify(ergm_result)
 
 
 if __name__ == '__main__':

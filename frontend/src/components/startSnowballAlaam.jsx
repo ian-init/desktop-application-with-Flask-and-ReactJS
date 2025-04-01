@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 
 function startSnowballAlaam() {
     const [attributeDict, setAttributeDict] = useState({});
@@ -11,7 +12,9 @@ function startSnowballAlaam() {
     const [error, setError] = useState(null);
 
     const [alaamResults, setAlaamResults] = useState([]);
+    const [networkType, setNetworkType] = useState("");
 
+    // fetch attribute list of dataset
     useEffect(() => {
         const fetchResult = async () => {
             try {
@@ -31,6 +34,7 @@ function startSnowballAlaam() {
             }
         };
         fetchResult();
+        // import html2pdf
         const script = document.createElement('script');
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js";
         script.async = true;
@@ -61,7 +65,8 @@ function startSnowballAlaam() {
         .from(element)
         .save();
     };
-
+    
+    // handle form value and submission
     const handleSubmit = (event) => {
         event.preventDefault();
         fetch('http://localhost:5000/get-startSnowballAlaam', {
@@ -74,10 +79,12 @@ function startSnowballAlaam() {
         .then(response => response.json())
         .then(data => {
             setAlaamResults(data); // Store the results in the alaamResults state
+            if (data.length > 0) {
+                setNetworkType(data[0].network_type);
+            }
         })
         .catch(error => console.error('Error sending data to backend:', error));
     };
-
     const handleSelectChange = (event) => {
         const { name, value } = event.target;
     
@@ -92,11 +99,14 @@ function startSnowballAlaam() {
         }
     };
 
+    const navigate = useNavigate();
+    const handleNavigateToERGM = () => {
+        navigate('/ergm');
+    };
 
     if (loading) {
         return <div>Loading...</div>;
     }
-
     if (error) {
         return <div>Error: {error.message}</div>;
     }
@@ -149,6 +159,7 @@ function startSnowballAlaam() {
                 <br></br>
                 {alaamResults.length > 0 && (
                 <div id='report-content'>
+                    {networkType && <h3>Network Type: {networkType}</h3>}
                     <div className='container'>
                         <table className='table'>
                             <thead>
@@ -185,13 +196,11 @@ function startSnowballAlaam() {
                         <br></br>
                     </div>
                 </div>
-
             )}
             {alaamResults.length > 0 && (
-                <div>
-                    <hr></hr>
-                    <br></br>
+                <div style={{ display: "flex", justifyContent: "space-evenly", margin: '30px'}}>
                     <button onClick={handleDownloadPDF}>Download Report</button>
+                    <button onClick={handleNavigateToERGM}>ERGM analysis</button>
                 </div>
             )}
             </div>

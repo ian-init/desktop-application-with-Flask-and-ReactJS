@@ -12,7 +12,7 @@ const FileUploadModule = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate('/viewUploadResult'); // Navigate to the 2nd component route
+    navigate('/viewUploadResult');
   };
   return (
     <>

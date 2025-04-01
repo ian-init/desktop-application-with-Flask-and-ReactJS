@@ -10,7 +10,7 @@ const NodeDescriptiveStat = () => {
     const [columns, setColumns] = useState([]);
     const [image, setImage] = useState('');
 
-    // Fetch json format
+    // Fetch json format dictionary
     useEffect(() => {
         const fetchResult = async () => {
             try {

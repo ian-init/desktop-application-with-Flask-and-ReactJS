@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 function CentralityForm({ setCentrality }) {
   const [localCentrality, setLocalCentrality] = useState('');
+  
   const [binSize, setBinSize] = useState('');
   const [image, setImage] = useState('');
 
+  // fetch frontend form value 
   const handleSelectChange = (event) => {
     const { name, value } = event.target;
-
     if (name === 'localCentrality') {
       setLocalCentrality(value);
       setCentrality(value); // Update the parent component's state
@@ -16,6 +17,7 @@ function CentralityForm({ setCentrality }) {
     }
   };
 
+  // form submission and fetch returned dictionary
   const handleSubmitToFlask = async (event) => {
     event.preventDefault(); // Prevent form from reloading the page
     const response = await fetch('http://localhost:5000/get-centrality', {

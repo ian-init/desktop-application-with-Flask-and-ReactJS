@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 const AttributeDescriptiveStat = () => {
-  const [attributeDict, setAttributeDict] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [attributeDict, setAttributeDict] = useState({});
   const [image, setImage] = useState('');
   const [length, setLength] = useState(null);
   const [columns, setColumns] = useState([]);
 
-  // Fetch dictionary
+  // Fetch dictionary from Flask
   useEffect(() => {
     const fetchResult = async () => {
         try {

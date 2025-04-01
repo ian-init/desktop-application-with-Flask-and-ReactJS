@@ -52,18 +52,6 @@ button:hover {
 }
 
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
 
 form {
   border-radius: 2vw;
@@ -87,7 +75,6 @@ input {
   color: black;
 }
 
-
 /* wrap components on a flex-row */
 .grid {
   display: flex;
@@ -96,6 +83,7 @@ input {
   
 }
 
+/* each visualisation is wrap in container clss */
 .container {
   width:100%;
 }
@@ -126,6 +114,7 @@ padding-bottom: 12px;
 background-color: rgb(248, 240, 230);
 }
 
+/* highlight key row in ALAAMEE result*/
 .alaamhighlight1 {
   color: rgb(109, 109, 255);
 }
@@ -134,16 +123,29 @@ background-color: rgb(248, 240, 230);
   background-color: rgb(109, 109, 255);
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
 
 @media (max-width: 1200px) {
   .grid {
     flex-direction: column;
   }
-
   .grid {
     gap:3vh;
+  }
 }
 
+/* html2pdf page break */
 @media print {
   .new-page {
     page-break-before: always;

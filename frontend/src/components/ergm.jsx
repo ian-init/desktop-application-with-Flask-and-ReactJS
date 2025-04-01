@@ -4,7 +4,7 @@ const ergm = () => {
   const [ergmData, setErgmData] = useState(null);
 
   useEffect(() => {
-    // Fetch the ERGM data from the Flask backend
+    // Fetch dictionary from Flask
     fetch('http://localhost:5000/get-ergm', {
       method: 'POST',
       headers: {
@@ -18,6 +18,7 @@ const ergm = () => {
       .catch(error => {
         console.error('Error fetching the ERGM data:', error);
       });
+      // import html2pdf
       const script = document.createElement('script');
       script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js";
       script.async = true;
@@ -66,7 +67,7 @@ const ergm = () => {
             <th>Estimate</th>
             <th>Std. Error</th>
             <th>z value</th>
-            <th>Pr(>|z|)</th>
+            <th>Pr(&#62;|z|)</th>
           </tr>
         </thead>
         <tbody>
